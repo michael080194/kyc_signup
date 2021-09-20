@@ -4,8 +4,8 @@ $modversion = [];
 //---模組基本資訊---//
 $modversion['name'] = '活動報名';
 $modversion['version'] = 1.00;
-$modversion['description'] = '模組說明';
-$modversion['author'] = '作者姓名';
+$modversion['description'] = '活動報名模組說明';
+$modversion['author'] = 'michael';
 $modversion['credits'] = '相關有功人員';
 $modversion['help'] = 'page=help';
 $modversion['license'] = 'GNU GPL 2.0';
