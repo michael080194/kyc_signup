@@ -70,6 +70,11 @@ class Kyc_signup_actions
             $$var_name = $myts->addSlashes($var_val);
         }
 
+        $uid = (int) $uid;
+        $number = (int) $number;
+        $enable = (int) $enable;
+        $candidate = (int) $candidate;
+
         $sql = "insert into `" . $xoopsDB->prefix("kyc_signup_actions") . "` (
                 `title`,
                 `detail`,
@@ -112,12 +117,11 @@ class Kyc_signup_actions
 
         $myts = \MyTextSanitizer::getInstance();
         foreach ($data as $col_name => $col_val) {
-            $col_val = $myts->htmlSpecialChars($col_val);
-
-            //過濾讀出的變數值 displayTarea($text, $html=0, $smiley=1, $xcode=1, $image=1, $br=1);
-            // $data['大量文字欄'] = $myts->displayTarea($data['大量文字欄'], 0, 1, 0, 1, 1);
-            // $data['HTML文字欄'] = $myts->displayTarea($data['HTML文字欄'], 1, 0, 0, 0, 0);
-
+            if ($col_name == 'detail') {
+                $col_val = $myts->displayTarea($col_val, 0, 1, 0, 1, 1);
+            } else {
+                $col_val = $myts->htmlSpecialChars($col_val);
+            }
             $xoopsTpl->assign($col_name, $col_val);
         }
     }
