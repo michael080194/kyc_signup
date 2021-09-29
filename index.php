@@ -25,7 +25,8 @@ switch ($op) {
     //新增資料
     case 'kyc_signup_actions_store':
         $id = Kyc_signup_actions::store();
-        header("location: {$_SERVER['PHP_SELF']}?id=$id");
+        // header("location: {$_SERVER['PHP_SELF']}?id=$id");
+        redirect_header($_SERVER['PHP_SELF'] . "?id=$id", 3, "成功建立活動！");
         exit;
 
     //修改用表單

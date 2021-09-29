@@ -56,7 +56,10 @@ class Kyc_signup_actions
     //新增資料
     public static function store()
     {
-        global $xoopsDB;
+        global $xoopsDB, $xoopsUser;
+        if (!$_SESSION['kyc_signup_adm']) {
+            redirect_header($_SERVER['PHP_SELF'], 3, "您沒有權限使用此功能");
+        }
 
         //XOOPS表單安全檢查
         Utility::xoops_security_check();
@@ -68,15 +71,27 @@ class Kyc_signup_actions
         }
 
         $sql = "insert into `" . $xoopsDB->prefix("kyc_signup_actions") . "` (
-        `欄位1`,
-        `欄位2`,
-        `欄位3`
-        ) values(
-        '{$欄位1值}',
-        '{$欄位2值}',
-        '{$欄位3值}'
-        )";
-        $xoopsDB->query($sql) or Utility::web_error($sql, __FILE__, __LINE__);
+                `title`,
+                `detail`,
+                `action_date`,
+                `end_date`,
+                `number`,
+                `setup`,
+                `uid`,
+                `enable`,
+                `candidate`
+                ) values(
+                '{$title}',
+                '{$detail}',
+                '{$action_date}',
+                '{$end_date}',
+                '{$number}',
+                '{$setup}',
+                '{$uid}',
+                '{$enable}',
+                '{$candidate}'
+                )";
+                $xoopsDB->queryF($sql) or Utility::web_error($sql, __FILE__, __LINE__);
 
         //取得最後新增資料的流水編號
         $id = $xoopsDB->getInsertId();
