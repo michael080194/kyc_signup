@@ -35,8 +35,8 @@ $modversion['paypal'][] = [
 $modversion['system_menu'] = 1;
 
 //---模組資料表架構---//
-// $modversion['sqlfile']['mysql'] = 'sql/mysql.sql';
-// $modversion['tables'] = [];
+$modversion['sqlfile']['mysql'] = 'sql/mysql.sql';
+$modversion['tables'] = ['kyc_signup_actions'];
 
 //---後台管理介面設定---//
 $modversion['hasAdmin'] = 1;
@@ -53,8 +53,8 @@ $modversion['hasMain'] = 1;
 // $modversion['onUninstall'] = "include/onUninstall.php";
 
 //---樣板設定---//
-$modversion['templates'][] = ['file' => '模組目錄_admin.tpl', 'description' => '後台共同樣板'];
-$modversion['templates'][] = ['file' => '模組目錄_index.tpl', 'description' => '前台共同樣板'];
+$modversion['templates'][] = ['file' => 'kyc_signup_admin.tpl', 'description' => '後台共同樣板'];
+$modversion['templates'][] = ['file' => 'kyc_signup_index.tpl', 'description' => '前台共同樣板'];
 
 //---搜尋---//
 // $modversion['hasSearch'] = 1;

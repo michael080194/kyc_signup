@@ -2,12 +2,12 @@
 // 如「模組目錄」= signup，則「首字大寫模組目錄」= Signup
 // 如「資料表名」= actions，則「模組物件」= Actions
 
-namespace XoopsModules\首字大寫模組目錄;
+namespace XoopsModules\Kyc_signup;
 
 use XoopsModules\Tadtools\FormValidator;
 use XoopsModules\Tadtools\Utility;
 
-class 模組物件
+class Kyc_signup_actions
 {
     //列出所有資料
     public static function index()
@@ -31,7 +31,7 @@ class 模組物件
             $xoopsTpl->assign($col_name, $col_val);
         }
 
-        $op = empty($id) ? "資料表名_store" : "資料表名_update";
+        $op = empty($id) ? "kyc_signup_actions_store" : "kyc_signup_actions_update";
         $xoopsTpl->assign('next_op', $op);
 
         //套用formValidator驗證機制
@@ -59,7 +59,7 @@ class 模組物件
             $$var_name = $myts->addSlashes($var_val);
         }
 
-        $sql = "insert into `" . $xoopsDB->prefix("資料表名") . "` (
+        $sql = "insert into `" . $xoopsDB->prefix("kyc_signup_actions") . "` (
         `欄位1`,
         `欄位2`,
         `欄位3`
@@ -113,7 +113,7 @@ class 模組物件
             $$var_name = $myts->addSlashes($var_val);
         }
 
-        $sql = "update `" . $xoopsDB->prefix("資料表名") . "` set
+        $sql = "update `" . $xoopsDB->prefix("kyc_signup_actions") . "` set
         `欄位1` = '{$欄位1值}',
         `欄位2` = '{$欄位2值}',
         `欄位3` = '{$欄位3值}'
@@ -132,7 +132,7 @@ class 模組物件
             return;
         }
 
-        $sql = "delete from `" . $xoopsDB->prefix("資料表名") . "`
+        $sql = "delete from `" . $xoopsDB->prefix("kyc_signup_actions") . "`
         where `id` = '{$id}'";
         $xoopsDB->queryF($sql) or Utility::web_error($sql, __FILE__, __LINE__);
     }
@@ -146,7 +146,7 @@ class 模組物件
             return;
         }
 
-        $sql = "select * from `" . $xoopsDB->prefix("資料表名") . "`
+        $sql = "select * from `" . $xoopsDB->prefix("kyc_signup_actions") . "`
         where `id` = '{$id}'";
         $result = $xoopsDB->query($sql) or Utility::web_error($sql, __FILE__, __LINE__);
         $data = $xoopsDB->fetchArray($result);
@@ -154,12 +154,13 @@ class 模組物件
     }
 
     //取得所有資料陣列
-    public static function get_all($auto_key = false)
+    public static function get_all($only_enable=true , $auto_key = false)
     {
         global $xoopsDB;
         $myts = \MyTextSanitizer::getInstance();
+        $and_enable = $only_enable ? "and `enable` = '1' and `action_date` >= now()" : '';
 
-        $sql = "select * from `" . $xoopsDB->prefix("資料表名") . "` where 1 ";
+        $sql = "select * from `" . $xoopsDB->prefix("tad_signup_actions") . "` where 1 $and_enable";
         $result = $xoopsDB->query($sql) or Utility::web_error($sql, __FILE__, __LINE__);
         $data_arr = [];
         while ($data = $xoopsDB->fetchArray($result)) {

@@ -1,7 +1,7 @@
 <?php
 defined('XOOPS_ROOT_PATH') || die('Restricted access.');
 
-class 首字大寫模組目錄CorePreload extends XoopsPreloadItem
+class Kyc_signupCorePreload extends XoopsPreloadItem
 {
     // to add PSR-4 autoloader
 

@@ -3,11 +3,11 @@
 // 如「資料表名」= actions，則「模組物件」= Actions
 use Xmf\Request;
 use XoopsModules\Tadtools\Utility;
-use XoopsModules\首字大寫模組目錄\模組物件;
+use XoopsModules\Kyc_signup\Kyc_signup_actions;
 
 /*-----------引入檔案區--------------*/
 require_once __DIR__ . '/header.php';
-$GLOBALS['xoopsOption']['template_main'] = '模組目錄_index.tpl';
+$GLOBALS['xoopsOption']['template_main'] = 'kyc_signup_index.tpl';
 require_once XOOPS_ROOT_PATH . '/header.php';
 
 /*-----------變數過濾----------*/
@@ -18,41 +18,41 @@ $id = Request::getInt('id');
 switch ($op) {
 
     //新增表單
-    case '資料表名_create':
-        模組物件::create();
+    case 'kyc_signup_actions_create':
+        Kyc_signup_actions::create();
         break;
 
     //新增資料
-    case '資料表名_store':
-        $id = 模組物件::store();
+    case 'kyc_signup_actions_store':
+        $id = Kyc_signup_actions::store();
         header("location: {$_SERVER['PHP_SELF']}?id=$id");
         exit;
 
     //修改用表單
-    case '資料表名_edit':
-        模組物件::create($id);
-        $op = '資料表名_create';
+    case 'kyc_signup_actions_edit':
+        Kyc_signup_actions::create($id);
+        $op = 'kyc_signup_actions_create';
         break;
 
     //更新資料
-    case '資料表名_update':
-        模組物件::update($id);
+    case 'kyc_signup_actions_update':
+        Kyc_signup_actions::update($id);
         header("location: {$_SERVER['PHP_SELF']}?id=$id");
         exit;
 
     //刪除資料
-    case '資料表名_destroy':
-        模組物件::destroy($id);
+    case 'kyc_signup_actions_destroy':
+        Kyc_signup_actions::destroy($id);
         header("location: {$_SERVER['PHP_SELF']}");
         exit;
 
     default:
         if (empty($id)) {
-            模組物件::index();
-            $op = '資料表名_index';
+            Kyc_signup_actions::index();
+            $op = 'kyc_signup_actions_index';
         } else {
-            模組物件::show($id);
-            $op = '資料表名_show';
+            Kyc_signup_actions::show($id);
+            $op = 'kyc_signup_actions_show';
         }
         break;
 }
@@ -63,5 +63,5 @@ switch ($op) {
 unset($_SESSION['api_mode']);
 $xoopsTpl->assign('toolbar', Utility::toolbar_bootstrap($interface_menu));
 $xoopsTpl->assign('now_op', $op);
-$xoTheme->addStylesheet(XOOPS_URL . '/modules/模組目錄/css/module.css');
+$xoTheme->addStylesheet(XOOPS_URL . '/modules/kyc_signup/css/module.css');
 require_once XOOPS_ROOT_PATH . '/footer.php';
