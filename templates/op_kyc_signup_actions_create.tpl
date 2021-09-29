@@ -77,6 +77,7 @@
     <div class="bar">
         <{$token_form}>
         <input type="hidden" name="uid" value="<{$uid}>">
+        <input type="hidden" name="id" value="<{$id}>">
         <input type="hidden" name="op" value="<{$next_op}>">
         <button type="submit" class="btn btn-primary">
             <i class="fa fa-save" aria-hidden="true"></i> <{$smarty.const._TAD_SAVE}>
