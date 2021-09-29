@@ -6,6 +6,7 @@ namespace XoopsModules\Kyc_signup;
 
 use XoopsModules\Tadtools\FormValidator;
 use XoopsModules\Tadtools\Utility;
+use XoopsModules\Tadtools\My97DatePicker;
 
 class Kyc_signup_actions
 {
@@ -21,7 +22,7 @@ class Kyc_signup_actions
     //編輯表單
     public static function create($id = '')
     {
-        global $xoopsTpl;
+        global $xoopsTpl, $xoopsUser;
 
         //抓取預設值
         $db_values = empty($id) ? [] : self::get($id);
@@ -43,6 +44,9 @@ class Kyc_signup_actions
         $token = new \XoopsFormHiddenToken();
         $token_form = $token->render();
         $xoopsTpl->assign("token_form", $token_form);
+        $uid = $xoopsUser ? $xoopsUser->uid() : 0;
+        $xoopsTpl->assign("uid", $uid);
+        My97DatePicker::render();
     }
 
     //新增資料
