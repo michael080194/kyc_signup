@@ -23,9 +23,13 @@ class Kyc_signup_actions
     public static function create($id = '')
     {
         global $xoopsTpl, $xoopsUser;
-
+        if (!$_SESSION['kyc_signup_adm']) {
+            redirect_header($_SERVER['PHP_SELF'], 3, "非管理員，無法執行此動作");
+        }
         //抓取預設值
         $db_values = empty($id) ? [] : self::get($id);
+        $db_values['number'] = empty($id) ? 50 : $db_values['number'];
+        $db_values['enable'] = empty($id) ? 1 : $db_values['enable'];
 
         foreach ($db_values as $col_name => $col_val) {
             $$col_name = $col_val;
