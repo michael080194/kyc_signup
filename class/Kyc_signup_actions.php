@@ -73,7 +73,7 @@ class Kyc_signup_actions
         $uid = (int) $uid;
         $number = (int) $number;
         $enable = (int) $enable;
-        $candidate = (int) $candidate;
+        // $candidate = (int) $candidate;
 
         $sql = "insert into `" . $xoopsDB->prefix("kyc_signup_actions") . "` (
                 `title`,
@@ -130,7 +130,9 @@ class Kyc_signup_actions
     public static function update($id = '')
     {
         global $xoopsDB;
-
+        if (!$_SESSION['kyc_signup_adm']) {
+            redirect_header($_SERVER['PHP_SELF'], 3, "您沒有權限使用此功能");
+        }
         //XOOPS表單安全檢查
         Utility::xoops_security_check();
 
@@ -139,14 +141,21 @@ class Kyc_signup_actions
         foreach ($_POST as $var_name => $var_val) {
             $$var_name = $myts->addSlashes($var_val);
         }
+        $uid = (int) $uid;
+        $number = (int) $number;
+        $enable = (int) $enable;
 
-        $sql = "update `" . $xoopsDB->prefix("kyc_signup_actions") . "` set
-        `欄位1` = '{$欄位1值}',
-        `欄位2` = '{$欄位2值}',
-        `欄位3` = '{$欄位3值}'
-        where `id` = '$id'";
-        $xoopsDB->queryF($sql) or Utility::web_error($sql, __FILE__, __LINE__);
-
+    $sql = "update `" . $xoopsDB->prefix("kyc_signup_actions") . "` set
+    `title` = '{$title}',
+    `detail` = '{$detail}',
+    `action_date` = '{$action_date}',
+    `end_date` = '{$end_date}',
+    `number` = '{$number}',
+    `setup` = '{$setup}',
+    `enable` = '{$enable}',
+    `uid` = '{$uid}'
+    where `id` = '$id'";
+    $xoopsDB->queryF($sql) or Utility::web_error($sql, __FILE__, __LINE__);
         return $id;
     }
 

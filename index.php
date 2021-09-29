@@ -38,7 +38,8 @@ switch ($op) {
     //更新資料
     case 'kyc_signup_actions_update':
         Kyc_signup_actions::update($id);
-        header("location: {$_SERVER['PHP_SELF']}?id=$id");
+        // header("location: {$_SERVER['PHP_SELF']}?id=$id");
+        redirect_header($_SERVER['PHP_SELF'] . "?id=$id", 3, "成功修改活動！");
         exit;
 
     //刪除資料
