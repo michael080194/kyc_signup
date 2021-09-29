@@ -160,7 +160,7 @@ class Kyc_signup_actions
         $myts = \MyTextSanitizer::getInstance();
         $and_enable = $only_enable ? "and `enable` = '1' and `action_date` >= now()" : '';
 
-        $sql = "select * from `" . $xoopsDB->prefix("tad_signup_actions") . "` where 1 $and_enable";
+        $sql = "select * from `" . $xoopsDB->prefix("kyc_signup_actions") . "` where 1 $and_enable";
         $result = $xoopsDB->query($sql) or Utility::web_error($sql, __FILE__, __LINE__);
         $data_arr = [];
         while ($data = $xoopsDB->fetchArray($result)) {
