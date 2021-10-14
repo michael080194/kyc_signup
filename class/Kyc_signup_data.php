@@ -13,11 +13,11 @@ use XoopsModules\Tadtools\SweetAlert;
 class Kyc_signup_data
 {
     //列出所有資料
-    public static function index()
+    public static function index($action_id)
     {
         global $xoopsTpl;
 
-        $all_data = self::get_all();
+        $all_data = self::get_all($action_id);
         $xoopsTpl->assign('all_data', $all_data);
     }
 
@@ -222,20 +222,18 @@ public static function store()
     }
 
     //取得所有資料陣列
-    public static function get_all($auto_key = false)
+    public static function get_all($action_id, $auto_key = false)
     {
         global $xoopsDB;
         $myts = \MyTextSanitizer::getInstance();
 
-        $sql = "select * from `" . $xoopsDB->prefix("kyc_signup_data") . "` where 1 ";
+        $sql = "select * from `" . $xoopsDB->prefix("kyc_signup_data") . "` where `action_id`='$action_id' order by `signup_date`";
         $result = $xoopsDB->query($sql) or Utility::web_error($sql, __FILE__, __LINE__);
         $data_arr = [];
+        $TadDataCenter = new TadDataCenter('kyc_signup');
         while ($data = $xoopsDB->fetchArray($result)) {
-
-            // $data['文字欄'] = $myts->htmlSpecialChars($data['文字欄']);
-            // $data['大量文字欄'] = $myts->displayTarea($data['大量文字欄'], 0, 1, 0, 1, 1);
-            // $data['HTML文字欄'] = $myts->displayTarea($data['HTML文字欄'], 1, 0, 0, 0, 0);
-            // $data['數字欄'] = (int) $data['數字欄'];
+            $TadDataCenter->set_col('id', $data['id']);
+            $data['tdc'] = $TadDataCenter->getData();
 
             if ($_SESSION['api_mode'] or $auto_key) {
                 $data_arr[] = $data;
