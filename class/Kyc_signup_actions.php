@@ -7,6 +7,7 @@ namespace XoopsModules\Kyc_signup;
 use XoopsModules\Tadtools\FormValidator;
 use XoopsModules\Tadtools\Utility;
 use XoopsModules\Tadtools\My97DatePicker;
+use XoopsModules\Tadtools\SweetAlert;
 
 class Kyc_signup_actions
 {
@@ -124,6 +125,8 @@ class Kyc_signup_actions
             }
             $xoopsTpl->assign($col_name, $col_val);
         }
+        $SweetAlert = new SweetAlert();
+        $SweetAlert->render("del_action", "index.php?op=kyc_signup_actions_destroy&id=", 'id');
     }
 
     //更新某一筆資料
@@ -163,7 +166,9 @@ class Kyc_signup_actions
     public static function destroy($id = '')
     {
         global $xoopsDB;
-
+        if (!$_SESSION['kyc_signup_adm']) {
+            redirect_header($_SERVER['PHP_SELF'], 3, "您沒有權限使用此功能");
+        }
         if (empty($id)) {
             return;
         }
@@ -205,6 +210,9 @@ class Kyc_signup_actions
             // $data['大量文字欄'] = $myts->displayTarea($data['大量文字欄'], 0, 1, 0, 1, 1);
             // $data['HTML文字欄'] = $myts->displayTarea($data['HTML文字欄'], 1, 0, 0, 0, 0);
             // $data['數字欄'] = (int) $data['數字欄'];
+            $data['title'] = $myts->htmlSpecialChars($data['title']);
+            $data['detail'] = $myts->displayTarea($data['detail'], 0, 1, 0, 1, 1);
+            $data['setup'] = $myts->displayTarea($data['setup'], 0, 1, 0, 1, 1);
 
             if ($_SESSION['api_mode'] or $auto_key) {
                 $data_arr[] = $data;
