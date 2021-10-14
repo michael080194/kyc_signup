@@ -67,6 +67,12 @@ switch ($op) {
         Kyc_signup_data::create($action_id, $id);
         $op = 'kyc_signup_data_create';
         break;
+    //更新報名資料
+    case 'kyc_signup_data_update':
+        Kyc_signup_data::update($id);
+        // header("location: {$_SERVER['PHP_SELF']}?op=tad_signup_data_show&id=$id");
+        redirect_header($_SERVER['PHP_SELF'] . "?op=kyc_signup_data_show&id=$id", 3, "成功修改報名資料！");
+        exit;
 
     default:
         if (empty($id)) {

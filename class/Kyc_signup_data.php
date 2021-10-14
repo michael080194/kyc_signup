@@ -152,7 +152,7 @@ public static function store()
     //更新某一筆資料
     public static function update($id = '')
     {
-        global $xoopsDB;
+        global $xoopsDB, $xoopsUser;
 
         //XOOPS表單安全檢查
         Utility::xoops_security_check();
@@ -162,13 +162,21 @@ public static function store()
         foreach ($_POST as $var_name => $var_val) {
             $$var_name = $myts->addSlashes($var_val);
         }
+        $action_id = (int) $action_id;
+        $uid = (int) $uid;
+
+        $now_uid = $xoopsUser ? $xoopsUser->uid() : 0;
 
         $sql = "update `" . $xoopsDB->prefix("kyc_signup_data") . "` set
-        `欄位1` = '{$欄位1值}',
-        `欄位2` = '{$欄位2值}',
-        `欄位3` = '{$欄位3值}'
-        where `id` = '$id'";
-        $xoopsDB->queryF($sql) or Utility::web_error($sql, __FILE__, __LINE__);
+        `signup_date` = now()
+        where `id` = '$id' and `uid` = '$now_uid'";
+        if ($xoopsDB->queryF($sql)) {
+            $TadDataCenter = new TadDataCenter('kyc_signup');
+            $TadDataCenter->set_col('id', $id);
+            $TadDataCenter->saveData();
+        } else {
+            Utility::web_error($sql, __FILE__, __LINE__);
+        }
 
         return $id;
     }
