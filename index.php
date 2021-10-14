@@ -73,6 +73,12 @@ switch ($op) {
         // header("location: {$_SERVER['PHP_SELF']}?op=tad_signup_data_show&id=$id");
         redirect_header($_SERVER['PHP_SELF'] . "?op=kyc_signup_data_show&id=$id", 3, "成功修改報名資料！");
         exit;
+    //刪除報名資料
+    case 'kyc_signup_data_destroy':
+        Kyc_signup_data::destroy($id);
+        // header("location: {$_SERVER['PHP_SELF']}?id=$action_id");
+        redirect_header($_SERVER['PHP_SELF'] . "?id=$action_id", 3, "成功刪除報名資料！");
+        exit;
 
     default:
         if (empty($id)) {

@@ -184,17 +184,24 @@ public static function store()
     //刪除某筆資料資料
     public static function destroy($id = '')
     {
-        global $xoopsDB;
+        global $xoopsDB, $xoopsUser;
 
         if (empty($id)) {
             return;
         }
 
-        $sql = "delete from `" . $xoopsDB->prefix("kyc_signup_data") . "`
-        where `id` = '{$id}'";
-        $xoopsDB->queryF($sql) or Utility::web_error($sql, __FILE__, __LINE__);
-    }
+        $now_uid = $xoopsUser ? $xoopsUser->uid() : 0;
 
+        $sql = "delete from `" . $xoopsDB->prefix("kyc_signup_data") . "`
+        where `id` = '{$id}' and `uid`='$now_uid'";
+        if ($xoopsDB->queryF($sql)) {
+            $TadDataCenter = new TadDataCenter('kyc_signup');
+            $TadDataCenter->set_col('id', $id);
+            $TadDataCenter->delData();
+        } else {
+            Utility::web_error($sql, __FILE__, __LINE__);
+        }
+    }
     //以流水號取得某筆資料
     public static function get($id = '')
     {
