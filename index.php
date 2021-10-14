@@ -58,6 +58,10 @@ switch ($op) {
         // header("location: {$_SERVER['PHP_SELF']}?op=tad_signup_data_show&id=$id");
         redirect_header("{$_SERVER['PHP_SELF']}?op=kyc_signup_data_show&id=$id", 3, "成功報名活動！");
         break;
+    //顯示報名表單
+    case 'kyc_signup_data_show':
+        Kyc_signup_data::show($id);
+        break;
     default:
         if (empty($id)) {
             Kyc_signup_actions::index();
