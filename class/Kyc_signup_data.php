@@ -8,6 +8,7 @@ use XoopsModules\Tadtools\FormValidator;
 use XoopsModules\Tadtools\Utility;
 use XoopsModules\Kyc_signup\Kyc_signup_actions;
 use XoopsModules\Tadtools\TadDataCenter;
+use XoopsModules\Tadtools\SweetAlert;
 
 class Kyc_signup_data
 {
@@ -147,6 +148,8 @@ public static function store()
         $xoopsTpl->assign('action', $action);
         $now_uid = $xoopsUser ? $xoopsUser->uid() : 0;
         $xoopsTpl->assign('now_uid', $now_uid);
+        $SweetAlert = new SweetAlert();
+        $SweetAlert->render("del_data", "index.php?op=kyc_signup_data_destroy&action_id={$action_id}&id=", 'id');
     }
 
     //更新某一筆資料

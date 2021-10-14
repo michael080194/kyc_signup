@@ -38,7 +38,7 @@
         <a href="index.php?op=kyc_signup_data_edit&action_id=<{$action_id}>&id=<{$id}>" class="btn btn-warning">
             <i class="fa fa-pencil" aria-hidden="true"></i> 修改報名資料
         </a>
-        <a href="index.php?op=kyc_signup_data_destroy&id=<{$id}>" class="btn btn-danger">
+        <a href="javascript:del_data('<{$id}>')" class="btn btn-danger">
             <i class="fa fa-times" aria-hidden="true"></i> 取消報名
         </a>
     </div>
