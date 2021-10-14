@@ -144,6 +144,8 @@ public static function store()
             $action[$col_name] = $col_val;
         }
         $xoopsTpl->assign('action', $action);
+        $now_uid = $xoopsUser ? $xoopsUser->uid() : 0;
+        $xoopsTpl->assign('now_uid', $now_uid);
     }
 
     //更新某一筆資料
