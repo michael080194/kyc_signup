@@ -19,7 +19,7 @@ $action_id = Request::getInt('action_id');
 switch ($op) {
 
     default:
-        Kyc_signup_data::my();
+        Kyc_signup_data::my($uid);
         $op = 'kyc_signup_data_my';
         break;
 }

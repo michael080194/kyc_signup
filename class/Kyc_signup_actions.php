@@ -130,7 +130,7 @@ class Kyc_signup_actions
         $SweetAlert = new SweetAlert();
         $SweetAlert->render("del_action", "index.php?op=kyc_signup_actions_destroy&id=", 'id');
 
-        $signup = Kyc_signup_data::get_all($id, true);
+        $signup = Kyc_signup_data::get_all($id, null , true);
         $xoopsTpl->assign('signup', $signup);
 
         BootstrapTable::render();
