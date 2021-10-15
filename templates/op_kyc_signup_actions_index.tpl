@@ -22,6 +22,7 @@
                 <td>
                     <{if $smarty.session.kyc_signup_adm}>
                         <a href="index.php?op=kyc_signup_actions_edit&id=<{$action.id}>" class="btn btn-sm btn-warning"><i class="fa fa-pencil" aria-hidden="true"></i> 編輯活動</a>
+                        <a href="index.php?op=kyc_signup_actions_copy&id=<{$action.id}>" class="btn btn-info btn-sm"><i class="fa fa-copy" aria-hidden="true"></i> 複製活動</a>
                     <{/if}>
 
                     <{if  $action.number > $action.signup|@count && $xoops_isuser && $action.end_date|strtotime >= $smarty.now}>

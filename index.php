@@ -80,6 +80,12 @@ switch ($op) {
         // header("location: {$_SERVER['PHP_SELF']}?id=$action_id");
         redirect_header($_SERVER['PHP_SELF'] . "?id=$action_id", 3, "成功刪除報名資料！");
         exit;
+    // 複製活動
+    case 'kyc_signup_actions_copy':
+        $new_id = Kyc_signup_actions::copy($id);
+        header("location: {$_SERVER['PHP_SELF']}?op=kyc_signup_actions_edit&id=$new_id");
+        exit;
+
     //更改錄取狀態
     case 'kyc_signup_data_accept':
         Kyc_signup_data::accept($id, $accept);

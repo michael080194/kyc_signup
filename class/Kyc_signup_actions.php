@@ -233,4 +233,42 @@ class Kyc_signup_actions
         return $data_arr;
     }
 
+    //複製活動
+    public static function copy($id)
+    {
+        global $xoopsDB, $xoopsUser;
+        if (!$_SESSION['kyc_signup_adm']) {
+            redirect_header($_SERVER['PHP_SELF'], 3, "您沒有權限使用此功能");
+        }
+
+        $action = self::get($id);
+        $uid = $xoopsUser->uid();
+        $end_date = date('Y-m-d 17:30:00', strtotime('+2 weeks'));
+        $action_date = date('Y-m-d 09:00:00', strtotime('+16 days'));
+
+        $sql = "insert into `" . $xoopsDB->prefix("kyc_signup_actions") . "` (
+        `title`,
+        `detail`,
+        `action_date`,
+        `end_date`,
+        `number`,
+        `setup`,
+        `uid`,
+        `enable`
+        ) values(
+        '{$action['title']}_copy',
+        '{$action['detail']}',
+        '{$action_date}',
+        '{$end_date}',
+        '{$action['number']}',
+        '{$action['setup']}',
+        '{$uid}',
+        '0'
+        )";
+        $xoopsDB->queryF($sql) or Utility::web_error($sql, __FILE__, __LINE__);
+
+        //取得最後新增資料的流水編號
+        $id = $xoopsDB->getInsertId();
+        return $id;
+    }
 }
