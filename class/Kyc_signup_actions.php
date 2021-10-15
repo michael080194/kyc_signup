@@ -8,6 +8,8 @@ use XoopsModules\Tadtools\FormValidator;
 use XoopsModules\Tadtools\Utility;
 use XoopsModules\Tadtools\My97DatePicker;
 use XoopsModules\Tadtools\SweetAlert;
+use XoopsModules\Kyc_signup\Kyc_signup_data;
+use XoopsModules\Tadtools\BootstrapTable;
 
 class Kyc_signup_actions
 {
@@ -127,6 +129,11 @@ class Kyc_signup_actions
         }
         $SweetAlert = new SweetAlert();
         $SweetAlert->render("del_action", "index.php?op=kyc_signup_actions_destroy&id=", 'id');
+
+        $signup = Kyc_signup_data::get_all($id, true);
+        $xoopsTpl->assign('signup', $signup);
+
+        BootstrapTable::render();
     }
 
     //更新某一筆資料
