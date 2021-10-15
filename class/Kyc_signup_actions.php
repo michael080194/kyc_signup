@@ -220,6 +220,7 @@ class Kyc_signup_actions
             $data['title'] = $myts->htmlSpecialChars($data['title']);
             $data['detail'] = $myts->displayTarea($data['detail'], 0, 1, 0, 1, 1);
             $data['setup'] = $myts->displayTarea($data['setup'], 0, 1, 0, 1, 1);
+            $data['signup'] = Kyc_signup_data::get_all($data['id']);
 
             if ($_SESSION['api_mode'] or $auto_key) {
                 $data_arr[] = $data;
