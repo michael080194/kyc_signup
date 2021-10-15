@@ -26,6 +26,9 @@
             <{foreach from=$signup.0.tdc key=col_name item=user name=tdc}>
                 <th data-sortable="true"><{$col_name}></th>
             <{/foreach}>
+            <{if $smarty.session.kyc_signup_adm}>
+                <th data-sortable="true">錄取</th>
+            <{/if}>
             <th>報名日期</th>
         </tr>
     </thead>
@@ -35,7 +38,7 @@
                 <{foreach from=$signup_data.tdc  key="col_name" item=user_data}>
                     <td>
                         <{foreach from=$user_data item=data}>
-                            <{if $smarty.session.tad_signup_adm || $signup_data.uid == $uid}>
+                            <{if $smarty.session.kyc_signup_adm || $signup_data.uid == $uid}>
                                 <div><a href="index.php?op=kyc_signup_data_show&id=<{$signup_data.id}>"><{$data}></a></div>
                             <{else}>
                                 <{if strpos($col_name, '姓名')!==false}>
@@ -47,6 +50,21 @@
                         <{/foreach}>
                     </td>
                 <{/foreach}>
+                <{if $smarty.session.kyc_signup_adm}>
+                    <td>
+                        <{if $signup_data.accept==='1'}>
+                            <div class="text-primary">錄取</div>
+                            <a href="index.php?op=kyc_signup_data_accept&id=<{$signup_data.id}>&action_id=<{$id}>&accept=0" class="btn btn-sm btn-warning">改成未錄取</a>
+                        <{elseif $signup_data.accept==='0'}>
+                            <div class="text-danger">未錄取</div>
+                            <a href="index.php?op=kyc_signup_data_accept&id=<{$signup_data.id}>&action_id=<{$id}>&accept=1" class="btn btn-sm btn-success">改成錄取</a>
+                        <{else}>
+                            <div class="text-muted">尚未設定</div>
+                            <a href="index.php?op=kyc_signup_data_accept&id=<{$signup_data.id}>&action_id=<{$id}>&accept=0" class="btn btn-sm btn-warning">未錄取</a>
+                            <a href="index.php?op=kyc_signup_data_accept&id=<{$signup_data.id}>&action_id=<{$id}>&accept=1" class="btn btn-sm btn-success">錄取</a>
+                        <{/if}>
+                    </td>
+                <{/if}>
                 <td><{$signup_data.signup_date}></td>
             </tr>
         <{/foreach}>
