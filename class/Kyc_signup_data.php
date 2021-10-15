@@ -27,9 +27,12 @@ class Kyc_signup_data
     {
      global $xoopsTpl, $xoopsUser;
 
+     $uid = $_SESSION['kyc_signup_adm'] ? null : $xoopsUser->uid();
         //抓取預設值
         $db_values = empty($id) ? [] : self::get($id);
-
+        if ($id and empty($db_values)) {
+            redirect_header($_SERVER['PHP_SELF'] . "?id={$action_id}", 3, "查無報名無資料，無法修改");
+        }
         foreach ($db_values as $col_name => $col_val) {
             $$col_name = $col_val;
             $xoopsTpl->assign($col_name, $col_val);
@@ -123,9 +126,13 @@ public static function store()
         if (empty($id)) {
             return;
         }
-
+        $uid = $_SESSION['kyc_signup_adm'] ? null : $xoopsUser->uid();
         $id = (int) $id;
-        $data = self::get($id);
+        $data = self::get($id, $uid);
+
+        if ($id and empty($data)) {
+            redirect_header($_SERVER['PHP_SELF'] . "?id={$action_id}", 3, "查無報名無資料，無法修改");
+        }
 
         $myts = \MyTextSanitizer::getInstance();
 
@@ -211,16 +218,16 @@ public static function store()
         }
     }
     //以流水號取得某筆資料
-    public static function get($id = '')
+    public static function get($id = '', $uid = '')
     {
         global $xoopsDB;
 
         if (empty($id)) {
             return;
         }
-
+        $and_uid = $uid ? "and `uid`='$uid'" : '';
         $sql = "select * from `" . $xoopsDB->prefix("kyc_signup_data") . "`
-        where `id` = '{$id}'";
+        where `id` = '{$id}' $and_uid";
         $result = $xoopsDB->query($sql) or Utility::web_error($sql, __FILE__, __LINE__);
         $data = $xoopsDB->fetchArray($result);
         return $data;
