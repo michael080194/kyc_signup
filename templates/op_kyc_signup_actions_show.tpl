@@ -35,10 +35,8 @@
                 <{foreach from=$signup_data.tdc  key="col_name" item=user_data}>
                     <td>
                         <{foreach from=$user_data item=data}>
-                            <{if $smarty.session.tad_signup_adm}>
-                                <div><{$data}></div>
-                            <{elseif $signup_data.uid == $uid}>
-                                <div><{$data}></div>
+                            <{if $smarty.session.tad_signup_adm || $signup_data.uid == $uid}>
+                                <div><a href="index.php?op=kyc_signup_data_show&id=<{$signup_data.id}>"><{$data}></a></div>
                             <{else}>
                                 <{if strpos($col_name, '姓名')!==false}>
                                     <div><{$data|substr_replace:'O':3:3}></div>
