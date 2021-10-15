@@ -32,10 +32,16 @@
     <tbody>
         <{foreach from=$signup item=signup_data}>
             <tr>
-                <{foreach from=$signup_data.tdc item=user_data}>
+                <{foreach from=$signup_data.tdc  key="col_name" item=user_data}>
                     <td>
                         <{foreach from=$user_data item=data}>
-                            <div><{$data}></div>
+                            <{if !$xoops_isuser && strpos($col_name, '姓名')!==false}>
+                                <div><{$data|substr_replace:'O':3:3}></div>
+                            <{elseif !$xoops_isuser}>
+                                <div>****</div>
+                            <{else}>
+                                <div><{$data}></div>
+                            <{/if}>
                         <{/foreach}>
                     </td>
                 <{/foreach}>

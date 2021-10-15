@@ -26,6 +26,8 @@
 
                     <{if  $action.number > $action.signup|@count && $xoops_isuser && $action.end_date|strtotime >= $smarty.now}>
                         <a href="index.php?op=kyc_signup_data_create&action_id=<{$action.id}>" class="btn btn-sm btn-info"><i class="fa fa-plus" aria-hidden="true"></i> 立即報名</a>
+                    <{else}>
+                        <a href="index.php?id=<{$action.id}>" class="btn btn-success btn-sm"><i class="fa fa-file" aria-hidden="true"></i> 詳情</a>
                     <{/if}>
                 </td>
             </tr>
