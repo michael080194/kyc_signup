@@ -109,7 +109,7 @@ class Kyc_signup_actions
     //以流水號秀出某筆資料內容
     public static function show($id = '')
     {
-        global $xoopsDB, $xoopsTpl;
+        global $xoopsDB, $xoopsTpl, $xoopsUser;
 
         if (empty($id)) {
             return;
@@ -134,6 +134,8 @@ class Kyc_signup_actions
         $xoopsTpl->assign('signup', $signup);
 
         BootstrapTable::render();
+        $uid = $xoopsUser ? $xoopsUser->uid() : 0;
+        $xoopsTpl->assign('uid', $uid);
     }
 
     //更新某一筆資料
