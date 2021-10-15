@@ -227,7 +227,7 @@ public static function store()
     }
 
     //取得所有資料陣列
-    public static function get_all($action_id='', $uid='',$auto_key = false)
+    public static function get_all($action_id = '', $uid = '', $auto_key = false)
     {
         global $xoopsDB, $xoopsUser;
         $myts = \MyTextSanitizer::getInstance();
@@ -247,7 +247,7 @@ public static function store()
         while ($data = $xoopsDB->fetchArray($result)) {
             $TadDataCenter->set_col('id', $data['id']);
             $data['tdc'] = $TadDataCenter->getData();
-
+            $data['action'] = Kyc_signup_actions::get($data['action_id']);
             if ($_SESSION['api_mode'] or $auto_key) {
                 $data_arr[] = $data;
             } else {
@@ -256,14 +256,12 @@ public static function store()
         }
         return $data_arr;
     }
-
     // 查詢某人的報名紀錄
     public static function my($uid)
     {
         global $xoopsTpl, $xoopsUser;
-
         $my_signup = self::get_all(null, $uid);
-        $xoopsTpl->assign('my_signup', $$my_signup);
+        $xoopsTpl->assign('my_signup', $my_signup);
         BootstrapTable::render();
     }
 }

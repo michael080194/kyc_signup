@@ -7,7 +7,7 @@ use XoopsModules\Kyc_signup\Kyc_signup_data;
 
 /*-----------引入檔案區--------------*/
 require_once __DIR__ . '/header.php';
-$GLOBALS['xoopsOption']['template_main'] = 'tad_signup_index.tpl';
+$GLOBALS['xoopsOption']['template_main'] = 'kyc_signup_index.tpl';
 require_once XOOPS_ROOT_PATH . '/header.php';
 
 /*-----------變數過濾----------*/
