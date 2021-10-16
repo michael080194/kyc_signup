@@ -310,7 +310,6 @@ public static function store()
             $content = "<p>您於 {$signup['signup_date']} 報名了「{$action['title']}」活動已於 {$now} 由 {$name} 取消報名。</p>";
             $content .= "欲重新報名，請連至 " . XOOPS_URL . "/modules/kyc_signup/index.php?op=kyc_signup_data_create&action_id={$action['id']}";
         }
-        // Utility::dd('adm_email='. $adm_email . '\n title='.$title .  '\n content='. $content);
 
         if (!self::send($title, $content, $email)) {
             redirect_header($_SERVER['PHP_SELF'], 3, "通知信寄發失敗！");
