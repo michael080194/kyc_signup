@@ -49,7 +49,7 @@ switch ($op) {
 
     default:
         if (empty($id)) {
-            Kyc_signup_actions::index();
+            Kyc_signup_actions::index(false);
             $op = 'kyc_signup_actions_index';
         } else {
             Kyc_signup_actions::show($id);
