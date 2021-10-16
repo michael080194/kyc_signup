@@ -35,7 +35,7 @@
 
 <{if $smarty.session.kyc_signup_adm || $uid==$now_uid}>
     <div class="bar">
-        <a href="index.php?op=kyc_signup_data_edit&action_id=<{$action_id}>&id=<{$id}>" class="btn btn-warning">
+        <a href="<{$xoops_url}>/modules/kyc_signup/index.php?op=kyc_signup_data_edit&action_id=<{$action_id}>&id=<{$id}>" class="btn btn-warning">
             <i class="fa fa-pencil" aria-hidden="true"></i> 修改報名資料
         </a>
         <a href="javascript:del_data('<{$id}>')" class="btn btn-danger">
