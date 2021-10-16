@@ -317,6 +317,17 @@ public static function store()
             $title = "「{$action['title']}」修改報名資料通知";
             $head = "<p>您於 {$signup['signup_date']} 報名「{$action['title']}」活動已於 {$now} 由 {$name} 修改報名資料如下：</p>";
             $foot = "完整詳情，請連至 " . XOOPS_URL . "/modules/kyc_signup/index.php?op=kyc_signup_data_show&id={$signup['id']}";
+        } elseif ($type == 'accept') {
+            $title = "「{$action['title']}」報名錄取狀況通知";
+            if ($signup['accept'] == 1) {
+                $head = "<p>您於 {$signup['signup_date']} 報名「{$action['title']}」活動經審核，<h2 style='color:blue'>恭喜錄取！</h2>您的報名資料如下：</p>";
+            } else {
+                $head = "<p>您於 {$signup['signup_date']} 報名「{$action['title']}」活動經審核，很遺憾的通知您，因名額有限，<span style='color:red;'>您並未錄取。</span>您的報名資料如下：</p>";
+            }
+            $foot = "完整詳情，請連至 " . XOOPS_URL . "/modules/kyc_signup/index.php?id={$signup['action_id']}";
+
+            $signupUser = $member_handler->getUser($signup['uid']);
+            $email = $signupUser->email();
         }
 
         $content = self::mk_content($id, $head, $foot, $action);
