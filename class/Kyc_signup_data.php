@@ -51,7 +51,7 @@ class Kyc_signup_data
         $token_form = $token->render();
         $xoopsTpl->assign("token_form", $token_form);
 
-        $action = Kyc_signup_actions::get($action_id);
+        $action = Kyc_signup_actions::get($action_id , true);
         $action['signup'] = Kyc_signup_data::get_all($action_id);
         if (time() > strtotime($action['end_date'])) {
             redirect_header($_SERVER['PHP_SELF'] . "?id=$action_id", 3, "已報名截止，無法再進行報名或修改報名");
@@ -59,16 +59,6 @@ class Kyc_signup_data
             redirect_header($_SERVER['PHP_SELF'] . "?id=$action_id", 3, "人數已滿，無法再進行報名");
         }
 
-        $myts = \MyTextSanitizer::getInstance();
-        foreach ($action as $col_name => $col_val) {
-            //過濾讀出的變數值
-            if ($col_name == 'detail') {
-                $col_val = $myts->displayTarea($col_val, 0, 1, 0, 1, 1);
-            } else {
-                $col_val = $myts->htmlSpecialChars($col_val);
-            }
-            $action[$col_name] = $col_val;
-        }
         $xoopsTpl->assign('action', $action);
 
         $uid = $xoopsUser ? $xoopsUser->uid() : 0;
@@ -147,16 +137,7 @@ public static function store()
         $tdc = $TadDataCenter->getData();
         $xoopsTpl->assign('tdc', $tdc);
 
-        $action = Kyc_signup_actions::get($action_id);
-        foreach ($action as $col_name => $col_val) {
-            //過濾讀出的變數值
-            if ($col_name == 'detail') {
-                $col_val = $myts->displayTarea($col_val, 0, 1, 0, 1, 1);
-            } else {
-                $col_val = $myts->htmlSpecialChars($col_val);
-            }
-            $action[$col_name] = $col_val;
-        }
+        $action = Kyc_signup_actions::get($action_id,true);
         $xoopsTpl->assign('action', $action);
         $now_uid = $xoopsUser ? $xoopsUser->uid() : 0;
         $xoopsTpl->assign('now_uid', $now_uid);
@@ -254,7 +235,7 @@ public static function store()
         while ($data = $xoopsDB->fetchArray($result)) {
             $TadDataCenter->set_col('id', $data['id']);
             $data['tdc'] = $TadDataCenter->getData();
-            $data['action'] = Kyc_signup_actions::get($data['action_id']);
+            $data['action'] = Kyc_signup_actions::get($data['action_id'], true);
             if ($_SESSION['api_mode'] or $auto_key) {
                 $data_arr[] = $data;
             } else {

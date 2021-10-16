@@ -118,15 +118,10 @@ class Kyc_signup_actions
         $id = (int) $id;
         $data = self::get($id);
 
-        $myts = \MyTextSanitizer::getInstance();
         foreach ($data as $col_name => $col_val) {
-            if ($col_name == 'detail') {
-                $col_val = $myts->displayTarea($col_val, 0, 1, 0, 1, 1);
-            } else {
-                $col_val = $myts->htmlSpecialChars($col_val);
-            }
             $xoopsTpl->assign($col_name, $col_val);
         }
+
         $SweetAlert = new SweetAlert();
         $SweetAlert->render("del_action", "index.php?op=kyc_signup_actions_destroy&id=", 'id');
 
@@ -188,7 +183,7 @@ class Kyc_signup_actions
     }
 
     //以流水號取得某筆資料
-    public static function get($id = '')
+    public static function get($id = '', $filter = false)
     {
         global $xoopsDB;
 
@@ -200,6 +195,14 @@ class Kyc_signup_actions
         where `id` = '{$id}'";
         $result = $xoopsDB->query($sql) or Utility::web_error($sql, __FILE__, __LINE__);
         $data = $xoopsDB->fetchArray($result);
+
+        if ($filter) {
+            $myts = \MyTextSanitizer::getInstance();
+            $data['detail'] = $myts->displayTarea($data['detail'], 0, 1, 0, 1, 1);
+            // $data['setup'] = $myts->displayTarea($data['setup'], 0, 1, 0, 1, 1);
+            $data['title'] = $myts->htmlSpecialChars($data['title']);
+        }
+
         return $data;
     }
 
@@ -214,11 +217,6 @@ class Kyc_signup_actions
         $result = $xoopsDB->query($sql) or Utility::web_error($sql, __FILE__, __LINE__);
         $data_arr = [];
         while ($data = $xoopsDB->fetchArray($result)) {
-
-            // $data['文字欄'] = $myts->htmlSpecialChars($data['文字欄']);
-            // $data['大量文字欄'] = $myts->displayTarea($data['大量文字欄'], 0, 1, 0, 1, 1);
-            // $data['HTML文字欄'] = $myts->displayTarea($data['HTML文字欄'], 1, 0, 0, 0, 0);
-            // $data['數字欄'] = (int) $data['數字欄'];
             $data['title'] = $myts->htmlSpecialChars($data['title']);
             $data['detail'] = $myts->displayTarea($data['detail'], 0, 1, 0, 1, 1);
             $data['setup'] = $myts->displayTarea($data['setup'], 0, 1, 0, 1, 1);

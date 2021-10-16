@@ -56,7 +56,7 @@ switch ($op) {
     //新增報名資料
     case 'kyc_signup_data_store':
         $id = Kyc_signup_data::store();
-        // header("location: {$_SERVER['PHP_SELF']}?op=tad_signup_data_show&id=$id");
+        Kyc_signup_data::mail($id,'store');
         redirect_header("{$_SERVER['PHP_SELF']}?op=kyc_signup_data_show&id=$id", 3, "成功報名活動！");
         break;
     //顯示報名表單
@@ -71,13 +71,15 @@ switch ($op) {
     //更新報名資料
     case 'kyc_signup_data_update':
         Kyc_signup_data::update($id);
-        // header("location: {$_SERVER['PHP_SELF']}?op=tad_signup_data_show&id=$id");
+        Kyc_signup_data::mail($id,'update');
         redirect_header($_SERVER['PHP_SELF'] . "?op=kyc_signup_data_show&id=$id", 3, "成功修改報名資料！");
         exit;
     //刪除報名資料
     case 'kyc_signup_data_destroy':
+        $uid = $_SESSION['kyc_signup_adm'] ? null : $xoopsUser->uid();
+        $signup = Kyc_signup_data::get($id , $uid);
         Kyc_signup_data::destroy($id);
-        // header("location: {$_SERVER['PHP_SELF']}?id=$action_id");
+        Kyc_signup_data::mail($id,'destroy',$signup);
         redirect_header($_SERVER['PHP_SELF'] . "?id=$action_id", 3, "成功刪除報名資料！");
         exit;
     // 複製活動
@@ -89,6 +91,7 @@ switch ($op) {
     //更改錄取狀態
     case 'kyc_signup_data_accept':
         Kyc_signup_data::accept($id, $accept);
+        Kyc_signup_data::mail($id,'accept');
         redirect_header($_SERVER['PHP_SELF'] . "?id=$action_id", 3, "成功設定錄取狀態！");
         exit;
     default:
