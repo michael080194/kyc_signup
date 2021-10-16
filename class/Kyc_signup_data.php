@@ -293,7 +293,7 @@ public static function store()
         if (empty($id)) {
             redirect_header($_SERVER['PHP_SELF'], 3, "無編號，無法寄送通知信");
         }
-        $signup = $signup ? $signup : self::get($id, true);
+        $signup = $signup ? $signup : self::get($id);
 
         $now = date("Y-m-d H:i:s");
         $name = $xoopsUser->name();
@@ -307,14 +307,87 @@ public static function store()
 
         if ($type == 'destroy') {
             $title = "「{$action['title']}」取消報名通知";
-            $content = "<p>您於 {$signup['signup_date']} 報名了「{$action['title']}」活動已於 {$now} 由 {$name} 取消報名。</p>";
-            $content .= "欲重新報名，請連至 " . XOOPS_URL . "/modules/kyc_signup/index.php?op=kyc_signup_data_create&action_id={$action['id']}";
+            $head = "<p>您於 {$signup['signup_date']} 報名「{$action['title']}」活動已於 {$now} 由 {$name} 取消報名。</p>";
+            $foot = "欲重新報名，請連至 " . XOOPS_URL . "/modules/kyc_signup/index.php?op=kyc_signup_data_create&action_id={$action['id']}";
+        } elseif ($type == 'store') {
+            $title = "「{$action['title']}」報名完成通知";
+            $head = "<p>您於 {$signup['signup_date']} 報名「{$action['title']}」活動已於 {$now} 由 {$name} 報名完成。</p>";
+            $foot = "完整詳情，請連至 " . XOOPS_URL . "/modules/kyc_signup/index.php?op=kyc_signup_data_show&id={$signup['id']}";
+        } elseif ($type == 'update') {
+            $title = "「{$action['title']}」修改報名資料通知";
+            $head = "<p>您於 {$signup['signup_date']} 報名「{$action['title']}」活動已於 {$now} 由 {$name} 修改報名資料如下：</p>";
+            $foot = "完整詳情，請連至 " . XOOPS_URL . "/modules/kyc_signup/index.php?op=kyc_signup_data_show&id={$signup['id']}";
         }
 
+        $content = self::mk_content($id, $head, $foot, $action);
         if (!self::send($title, $content, $email)) {
             redirect_header($_SERVER['PHP_SELF'], 3, "通知信寄發失敗！");
         }
-
         self::send($title, $content, $adm_email);
+    }
+
+    // 產生通知信內容
+    public static function mk_content($id, $head = '', $foot = '', $action = [])
+    {
+        if ($id) {
+            $TadDataCenter = new TadDataCenter('kyc_signup');
+            $TadDataCenter->set_col('id', $id);
+            $tdc = $TadDataCenter->getData();
+
+            $table = '<table class="table">';
+            foreach ($tdc as $title => $signup) {
+                $table .= "
+                <tr>
+                    <th>{$title}</th>
+                    <td>";
+                foreach ($signup as $i => $val) {
+                    $table .= "<div>{$val}</div>";
+                }
+
+                $table .= "</td>
+                </tr>";
+            }
+            $table .= '</table>';
+        }
+
+        $content = "
+        <html>
+            <head>
+                <style>
+                    .table{
+                        border:1px solid #000;
+                        border-collapse: collapse;
+                        margin:10px 0px;
+                    }
+
+                    .table th, .table td{
+                        border:1px solid #000;
+                        padding: 4px 10px;
+                    }
+
+                    .table th{
+                        background:#c1e7f4;
+                    }
+
+                    .well{
+                        border-radius: 10px;
+                        background: #fcfcfc;
+                        border: 2px solid #cfcfcf;
+                        padding:14px 16px;
+                        margin:10px 0px;
+                    }
+                </style>
+            </head>
+            <body>
+            $head
+            <h2>{$action['title']}</h2>
+            <div>活動日期：{$action['action_date']}</div>
+            <div class='well'>{$action['detail']}</div>
+            $table
+            $foot
+            </body>
+        </html>
+        ";
+        return $content;
     }
 }
