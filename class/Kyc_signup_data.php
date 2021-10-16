@@ -270,4 +270,19 @@ public static function store()
         where `id` = '$id'";
         $xoopsDB->queryF($sql) or Utility::web_error($sql, __FILE__, __LINE__);
     }
+
+    //立即寄出
+    public static function send($title = "無標題", $content = "無內容", $email = "")
+    {
+        global $xoopsUser;
+        if (empty($email)) {
+            $email = $xoopsUser->email();
+        }
+        $xoopsMailer = xoops_getMailer();
+        $xoopsMailer->multimailer->ContentType = "text/html";
+        $xoopsMailer->addHeaders("MIME-Version: 1.0");
+        $header = '';
+        return $xoopsMailer->sendMail($email, $title, $content, $header);
+    }
+
 }
