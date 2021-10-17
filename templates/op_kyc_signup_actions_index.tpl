@@ -43,6 +43,8 @@
     </tbody>
 </table>
 
+<{$bar}>
+
 <{if $smarty.session.can_add}>
     <div class="bar">
         <a href="<{$xoops_url}>/modules/kyc_signup/index.php?op=kyc_signup_actions_create" class="btn btn-primary"><i class="fa fa-plus" aria-hidden="true"></i> 新增活動</a>

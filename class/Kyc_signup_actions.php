@@ -232,11 +232,22 @@ class Kyc_signup_actions
     //取得所有資料陣列
     public static function get_all($only_enable=true , $auto_key = false)
     {
-        global $xoopsDB;
+        global $xoopsDB,$xoopsModuleConfig,$xoopsTpl;
         $myts = \MyTextSanitizer::getInstance();
         $and_enable = $only_enable ? "and `enable` = '1' and `action_date` >= now()" : '';
 
         $sql = "select * from `" . $xoopsDB->prefix("kyc_signup_actions") . "` where 1 $and_enable";
+
+        // if (!$_SESSION['api_mode']) {
+            //Utility::getPageBar($原sql語法, 每頁顯示幾筆資料, 最多顯示幾個頁數選項);
+            $PageBar = Utility::getPageBar($sql, $xoopsModuleConfig['show_number'], 10);
+            $bar = $PageBar['bar'];
+            $sql = $PageBar['sql'];
+            $total = $PageBar['total'];
+            $xoopsTpl->assign('bar', $bar);
+            $xoopsTpl->assign('total', $total);
+        // }
+
         $result = $xoopsDB->query($sql) or Utility::web_error($sql, __FILE__, __LINE__);
         $data_arr = [];
         while ($data = $xoopsDB->fetchArray($result)) {
