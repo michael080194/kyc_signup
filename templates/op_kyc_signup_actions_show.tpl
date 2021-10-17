@@ -26,9 +26,7 @@
             <{foreach from=$signup.0.tdc key=col_name item=user name=tdc}>
                 <th data-sortable="true"><{$col_name}></th>
             <{/foreach}>
-            <{if $smarty.session.can_add}>
-                <th data-sortable="true">錄取</th>
-            <{/if}>
+            <th data-sortable="true">錄取</th>
             <th>報名日期</th>
         </tr>
     </thead>
@@ -38,7 +36,7 @@
                 <{foreach from=$signup_data.tdc  key="col_name" item=user_data}>
                     <td>
                         <{foreach from=$user_data item=data}>
-                            <{if $smarty.session.can_add || $signup_data.uid == $uid}>
+                        <{if ($smarty.session.can_add && $uid == $now_uid) || $signup_data.uid == $now_uid}>
                                 <div><a href="<{$xoops_url}>/modules/kyc_signup/index.php?op=kyc_signup_data_show&id=<{$signup_data.id}>"><{$data}></a></div>
                             <{else}>
                                 <{if strpos($col_name, '姓名')!==false}>
@@ -50,28 +48,32 @@
                         <{/foreach}>
                     </td>
                 <{/foreach}>
-                <{if $smarty.session.can_add}>
                     <td>
                         <{if $signup_data.accept==='1'}>
                             <div class="text-primary">錄取</div>
+                            <{if $smarty.session.can_add && $uid == $now_uid}>
                             <a href="<{$xoops_url}>/modules/kyc_signup/index.php?op=kyc_signup_data_accept&id=<{$signup_data.id}>&action_id=<{$id}>&accept=0" class="btn btn-sm btn-warning">改成未錄取</a>
+                            <{/if}>
                         <{elseif $signup_data.accept==='0'}>
                             <div class="text-danger">未錄取</div>
+                            <{if $smarty.session.can_add && $uid == $now_uid}>
                             <a href="<{$xoops_url}>/modules/kyc_signup/index.php?op=kyc_signup_data_accept&id=<{$signup_data.id}>&action_id=<{$id}>&accept=1" class="btn btn-sm btn-success">改成錄取</a>
+                            <{/if}>
                         <{else}>
                             <div class="text-muted">尚未設定</div>
+                            <{if $smarty.session.can_add && $uid == $now_uid}>
                             <a href="<{$xoops_url}>/modules/kyc_signup/index.php?op=kyc_signup_data_accept&id=<{$signup_data.id}>&action_id=<{$id}>&accept=0" class="btn btn-sm btn-warning">未錄取</a>
                             <a href="<{$xoops_url}>/modules/kyc_signup/index.php?op=kyc_signup_data_accept&id=<{$signup_data.id}>&action_id=<{$id}>&accept=1" class="btn btn-sm btn-success">錄取</a>
+                            <{/if}>
                         <{/if}>
                     </td>
-                <{/if}>
                 <td><{$signup_data.signup_date}></td>
             </tr>
         <{/foreach}>
     </tbody>
 </table>
 
-<{if $smarty.session.can_add}>
+<{if $smarty.session.can_add  && $uid == $now_uid}>
     <div class="bar">
         <a href="javascript:del_action('<{$id}>')" class="btn btn-danger"><i class="fa fa-times"
          aria-hidden="true"></i> 刪除活動</a>

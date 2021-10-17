@@ -16,10 +16,13 @@ class Kyc_signup_actions
     //列出所有資料
     public static function index($only_enable = true)
     {
-        global $xoopsTpl;
+        global $xoopsTpl, $xoopsUser;
 
         $all_data = self::get_all($only_enable);
         $xoopsTpl->assign('all_data', $all_data);
+
+        $now_uid = $xoopsUser ? $xoopsUser->uid() : 0;
+        $xoopsTpl->assign('now_uid', $now_uid);
     }
 
     //編輯表單
@@ -29,14 +32,25 @@ class Kyc_signup_actions
         if (!$_SESSION['can_add']) {
             redirect_header($_SERVER['PHP_SELF'], 3, "非管理員，無法執行此動作");
         }
-        //抓取預設值
-        $db_values = empty($id) ? [] : self::get($id);
-        $db_values['number'] = empty($id) ? 50 : $db_values['number'];
-        $db_values['enable'] = empty($id) ? 1 : $db_values['enable'];
 
-        foreach ($db_values as $col_name => $col_val) {
-            $$col_name = $col_val;
-            $xoopsTpl->assign($col_name, $col_val);
+        $now_uid = $xoopsUser ? $xoopsUser->uid() : 0;
+        if ($id) {
+            //抓取預設值
+            $db_values = empty($id) ? [] : self::get($id);
+
+            if ($uid != $db_values['uid'] && !$_SESSION['kyc_signup_adm']) {
+                redirect_header($_SERVER['PHP_SELF'], 3, "您沒有權限使用此功能");
+            }
+
+            $db_values['number'] = empty($id) ? 50 : $db_values['number'];
+            $db_values['enable'] = empty($id) ? 1 : $db_values['enable'];
+
+            foreach ($db_values as $col_name => $col_val) {
+                $$col_name = $col_val;
+                $xoopsTpl->assign($col_name, $col_val);
+            }
+        } else {
+            $xoopsTpl->assign('uid', $uid);
         }
 
         $op = empty($id) ? "kyc_signup_actions_store" : "kyc_signup_actions_update";
@@ -51,8 +65,6 @@ class Kyc_signup_actions
         $token = new \XoopsFormHiddenToken();
         $token_form = $token->render();
         $xoopsTpl->assign("token_form", $token_form);
-        $uid = $xoopsUser ? $xoopsUser->uid() : 0;
-        $xoopsTpl->assign("uid", $uid);
         My97DatePicker::render();
     }
 
@@ -129,14 +141,14 @@ class Kyc_signup_actions
         $xoopsTpl->assign('signup', $signup);
 
         BootstrapTable::render();
-        $uid = $xoopsUser ? $xoopsUser->uid() : 0;
-        $xoopsTpl->assign('uid', $uid);
+        $now_uid = $xoopsUser ? $xoopsUser->uid() : 0;
+        $xoopsTpl->assign('now_uid', $now_uid);
     }
 
     //更新某一筆資料
     public static function update($id = '')
     {
-        global $xoopsDB;
+        global $xoopsDB,$xoopsUser;
         if (!$_SESSION['can_add']) {
             redirect_header($_SERVER['PHP_SELF'], 3, "您沒有權限使用此功能");
         }
@@ -151,6 +163,11 @@ class Kyc_signup_actions
         $uid = (int) $uid;
         $number = (int) $number;
         $enable = (int) $enable;
+
+        $now_uid = $xoopsUser ? $xoopsUser->uid() : 0;
+        if ($uid != $now_uid && !$_SESSION['kyc_signup_adm']) {
+            redirect_header($_SERVER['PHP_SELF'], 3, "您沒有權限使用此功能");
+        }
 
     $sql = "update `" . $xoopsDB->prefix("kyc_signup_actions") . "` set
     `title` = '{$title}',
@@ -169,12 +186,18 @@ class Kyc_signup_actions
     //刪除某筆資料資料
     public static function destroy($id = '')
     {
-        global $xoopsDB;
+        global $xoopsDB,$xoopsUser;
         if (!$_SESSION['can_add']) {
             redirect_header($_SERVER['PHP_SELF'], 3, "您沒有權限使用此功能");
         }
         if (empty($id)) {
             return;
+        }
+
+        $action = self::get($id);
+        $now_uid = $xoopsUser ? $xoopsUser->uid() : 0;
+        if ($action['uid'] != $now_uid['uid'] && !$_SESSION['kyc_signup_adm']) {
+            redirect_header($_SERVER['PHP_SELF'], 3, "您沒有權限使用此功能");
         }
 
         $sql = "delete from `" . $xoopsDB->prefix("kyc_signup_actions") . "`

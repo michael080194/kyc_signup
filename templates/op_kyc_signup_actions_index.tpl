@@ -15,9 +15,9 @@
             <tr>
                 <td>
                 <{if $action.enable && $action.number > $action.signup|@count && $xoops_isuser && $action.end_date|strtotime >= $smarty.now}>
-                    <i class="fa fa-check text-success" aria-hidden="true"></i>
+                    <i class="fa fa-check text-success" data-toggle="tooltip" title="報名中" aria-hidden="true"></i>
                 <{else}>
-                    <i class="fa fa-times text-danger" aria-hidden="true"></i>
+                    <i class="fa fa-times text-danger"  data-toggle="tooltip" title="無法報名" aria-hidden="true"></i>
                 <{/if}>
                 <a href="<{$xoops_url}>/modules/kyc_signup/index.php?id=<{$action.id}>"><{$action.title}></a>
 
@@ -27,7 +27,7 @@
                 <td><{$action.end_date}></td>
                 <td><{$action.signup|@count}>/<{$action.number}></td>
                 <td>
-                    <{if $smarty.session.can_add}>
+                    <{if $smarty.session.can_add && ($action.uid==$now_uid || $smarty.session.kyc_signup_adm)}>
                         <a href="<{$xoops_url}>/modules/kyc_signup/index.php?op=kyc_signup_actions_edit&id=<{$action.id}>" class="btn btn-sm btn-warning"><i class="fa fa-pencil" aria-hidden="true"></i> 編輯活動</a>
                         <a href="<{$xoops_url}>/modules/kyc_signup/index.php?op=kyc_signup_actions_copy&id=<{$action.id}>" class="btn btn-info btn-sm"><i class="fa fa-copy" aria-hidden="true"></i> 複製活動</a>
                     <{/if}>
