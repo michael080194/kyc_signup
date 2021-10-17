@@ -72,14 +72,23 @@ $modversion['templates'][] = ['file' => 'kyc_signup_index.tpl', 'description' =>
 // ];
 
 //---偏好設定---//
-// $modversion['config'][] = [
-//     'name' => '偏好設定名稱（英文）',
-//     'title' => '_MI_偏好設定標題_常數',
-//     'description' => '_MI_偏好設定說明_常數',
-//     'formtype' => '輸入表單類型',
-//     'valuetype' => '輸入值類型',
-//     'default' => '預設值',
-// ];
+$modversion['config'][] = [
+    'name' => 'show_number',
+    'title' => '_MI_KYC_SIGNUP_SHOW_NUMBER',
+    'description' => '_MI_KYC_SIGNUP_SHOW_NUMBER_DESC',
+    'formtype' => 'textbox',
+    'valuetype' => 'int',
+    'default' => '5',
+];
+
+$modversion['config'][] = [
+    'name' => 'only_enable',
+    'title' => '_MI_KYC_SIGNUP_ONLY_ENABLE',
+    'description' => '_MI_KYC_SIGNUP_ONLY_ENABLE_DESC',
+    'formtype' => 'yesno',
+    'valuetype' => 'int',
+    'default' => '0',
+];
 
 //---評論---//
 // $modversion['hasComments'] = 1;
