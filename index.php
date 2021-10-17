@@ -96,7 +96,7 @@ switch ($op) {
         exit;
     default:
         if (empty($id)) {
-            Kyc_signup_actions::index();
+            Kyc_signup_actions::index($xoopsModuleConfig['only_enable']);
             $op = 'kyc_signup_actions_index';
         } else {
             Kyc_signup_actions::show($id);

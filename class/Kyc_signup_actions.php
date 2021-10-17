@@ -236,8 +236,7 @@ class Kyc_signup_actions
         $myts = \MyTextSanitizer::getInstance();
         $and_enable = $only_enable ? "and `enable` = '1' and `action_date` >= now()" : '';
 
-        $sql = "select * from `" . $xoopsDB->prefix("kyc_signup_actions") . "` where 1 $and_enable";
-
+        $sql = "select * from `" . $xoopsDB->prefix("kyc_signup_actions") . "` where 1 $and_enable order by `enable`, `action_date` desc";
         // if (!$_SESSION['api_mode']) {
             //Utility::getPageBar($原sql語法, 每頁顯示幾筆資料, 最多顯示幾個頁數選項);
             $PageBar = Utility::getPageBar($sql, $xoopsModuleConfig['show_number'], 10);

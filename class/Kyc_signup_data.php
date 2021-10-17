@@ -52,6 +52,12 @@ class Kyc_signup_data
         $xoopsTpl->assign("token_form", $token_form);
 
         $action = Kyc_signup_actions::get($action_id , true);
+        if (!$action['enable']) {
+            redirect_header($_SERVER['PHP_SELF'] . "?id=$action_id", 3, "該報名已關閉，無法再進行報名或修改報名");
+        } elseif (time() > strtotime($action['end_date'])) {
+            redirect_header($_SERVER['PHP_SELF'] . "?id=$action_id", 3, "已報名截止，無法再進行報名或修改報名");
+        }
+
         $action['signup'] = Kyc_signup_data::get_all($action_id);
         if (time() > strtotime($action['end_date'])) {
             redirect_header($_SERVER['PHP_SELF'] . "?id=$action_id", 3, "已報名截止，無法再進行報名或修改報名");
