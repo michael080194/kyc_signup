@@ -1,7 +1,4 @@
 <?php
-// 如「模組目錄」= signup，則「首字大寫模組目錄」= Signup
-// 如「資料表名」= actions，則「模組物件」= Actions
-
 namespace XoopsModules\Kyc_signup;
 
 use XoopsModules\Tadtools\FormValidator;
@@ -10,6 +7,7 @@ use XoopsModules\Tadtools\My97DatePicker;
 use XoopsModules\Tadtools\SweetAlert;
 use XoopsModules\Kyc_signup\Kyc_signup_data;
 use XoopsModules\Tadtools\BootstrapTable;
+use XoopsModules\Tadtools\CkEditor;
 
 class Kyc_signup_actions
 {
@@ -66,6 +64,10 @@ class Kyc_signup_actions
         $token_form = $token->render();
         $xoopsTpl->assign("token_form", $token_form);
         My97DatePicker::render();
+        $CkEditor = new CkEditor("kyc_signup", "detail", $detail);
+        $CkEditor->setHeight(350);
+        $editor = $CkEditor->render();
+        $xoopsTpl->assign('editor', $editor);
     }
 
     //新增資料
@@ -221,8 +223,7 @@ class Kyc_signup_actions
 
         if ($filter) {
             $myts = \MyTextSanitizer::getInstance();
-            $data['detail'] = $myts->displayTarea($data['detail'], 0, 1, 0, 1, 1);
-            // $data['setup'] = $myts->displayTarea($data['setup'], 0, 1, 0, 1, 1);
+            $data['detail'] = $myts->displayTarea($data['detail'], 1, 0, 0, 0, 0);
             $data['title'] = $myts->htmlSpecialChars($data['title']);
         }
 
@@ -251,8 +252,7 @@ class Kyc_signup_actions
         $data_arr = [];
         while ($data = $xoopsDB->fetchArray($result)) {
             $data['title'] = $myts->htmlSpecialChars($data['title']);
-            $data['detail'] = $myts->displayTarea($data['detail'], 0, 1, 0, 1, 1);
-            $data['setup'] = $myts->displayTarea($data['setup'], 0, 1, 0, 1, 1);
+            $data['detail'] = $myts->displayTarea($data['detail'], 1, 0, 0, 0, 0);
             $data['signup'] = Kyc_signup_data::get_all($data['id']);
 
             if ($_SESSION['api_mode'] or $auto_key) {
