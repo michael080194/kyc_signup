@@ -76,7 +76,7 @@ switch ($op) {
         exit;
     //刪除報名資料
     case 'kyc_signup_data_destroy':
-        $uid = $_SESSION['kyc_signup_adm'] ? null : $xoopsUser->uid();
+        $uid = $_SESSION['can_add'] ? null : $xoopsUser->uid();
         $signup = Kyc_signup_data::get($id , $uid);
         Kyc_signup_data::destroy($id);
         Kyc_signup_data::mail($id,'destroy',$signup);

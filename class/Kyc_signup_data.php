@@ -27,7 +27,7 @@ class Kyc_signup_data
     {
      global $xoopsTpl, $xoopsUser;
 
-     $uid = $_SESSION['kyc_signup_adm'] ? null : $xoopsUser->uid();
+     $uid = $_SESSION['can_add'] ? null : $xoopsUser->uid();
         //抓取預設值
         $db_values = empty($id) ? [] : self::get($id);
         if ($id and empty($db_values)) {
@@ -116,7 +116,7 @@ public static function store()
         if (empty($id)) {
             return;
         }
-        $uid = $_SESSION['kyc_signup_adm'] ? null : $xoopsUser->uid();
+        $uid = $_SESSION['can_add'] ? null : $xoopsUser->uid();
         $id = (int) $id;
         $data = self::get($id, $uid);
 
@@ -223,7 +223,7 @@ public static function store()
         if ($action_id) {
             $sql = "select * from `" . $xoopsDB->prefix("kyc_signup_data") . "` where `action_id`='$action_id' order by `signup_date`";
         } else {
-            if (!$_SESSION['kyc_signup_adm'] or !$uid) {
+            if (!$_SESSION['can_add'] or !$uid) {
                 $uid = $xoopsUser ? $xoopsUser->uid() : 0;
             }
             $sql = "select * from `" . $xoopsDB->prefix("kyc_signup_data") . "` where `uid`='$uid' order by `signup_date`";
@@ -258,7 +258,7 @@ public static function store()
     {
         global $xoopsDB;
 
-        if (!$_SESSION['kyc_signup_adm']) {
+        if (!$_SESSION['can_add']) {
             redirect_header($_SERVER['PHP_SELF'], 3, "您沒有權限使用此功能");
         }
 

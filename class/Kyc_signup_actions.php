@@ -26,7 +26,7 @@ class Kyc_signup_actions
     public static function create($id = '')
     {
         global $xoopsTpl, $xoopsUser;
-        if (!$_SESSION['kyc_signup_adm']) {
+        if (!$_SESSION['can_add']) {
             redirect_header($_SERVER['PHP_SELF'], 3, "非管理員，無法執行此動作");
         }
         //抓取預設值
@@ -60,7 +60,7 @@ class Kyc_signup_actions
     public static function store()
     {
         global $xoopsDB, $xoopsUser;
-        if (!$_SESSION['kyc_signup_adm']) {
+        if (!$_SESSION['can_add']) {
             redirect_header($_SERVER['PHP_SELF'], 3, "您沒有權限使用此功能");
         }
 
@@ -137,7 +137,7 @@ class Kyc_signup_actions
     public static function update($id = '')
     {
         global $xoopsDB;
-        if (!$_SESSION['kyc_signup_adm']) {
+        if (!$_SESSION['can_add']) {
             redirect_header($_SERVER['PHP_SELF'], 3, "您沒有權限使用此功能");
         }
         //XOOPS表單安全檢查
@@ -170,7 +170,7 @@ class Kyc_signup_actions
     public static function destroy($id = '')
     {
         global $xoopsDB;
-        if (!$_SESSION['kyc_signup_adm']) {
+        if (!$_SESSION['can_add']) {
             redirect_header($_SERVER['PHP_SELF'], 3, "您沒有權限使用此功能");
         }
         if (empty($id)) {
@@ -235,7 +235,7 @@ class Kyc_signup_actions
     public static function copy($id)
     {
         global $xoopsDB, $xoopsUser;
-        if (!$_SESSION['kyc_signup_adm']) {
+        if (!$_SESSION['can_add']) {
             redirect_header($_SERVER['PHP_SELF'], 3, "您沒有權限使用此功能");
         }
 
