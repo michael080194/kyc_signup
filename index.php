@@ -17,6 +17,7 @@ $id = Request::getInt('id');
 $action_id = Request::getInt('action_id');
 $accept = Request::getInt('accept');
 $files_sn = Request::getInt('files_sn');
+
 /*-----------執行動作判斷區----------*/
 switch ($op) {
     // 下載檔案
@@ -24,6 +25,15 @@ switch ($op) {
         $TadUpFiles = new TadUpFiles('kyc_signup');
         $TadUpFiles->add_file_counter($files_sn);
         exit;
+    // 匯入 CSV 並預覽
+    case 'kyc_signup_data_preview_csv':
+        Kyc_signup_data::preview_csv($id);
+        break;
+    //批次匯入 CSV
+    case 'kyc_signup_data_import_csv':
+        Kyc_signup_data::import_csv($id);
+        redirect_header("{$_SERVER['PHP_SELF']}?id=$id", 3, "成功匯入報名資料！");
+        break;
     //新增表單
     case 'kyc_signup_actions_create':
         Kyc_signup_actions::create();

@@ -418,4 +418,86 @@ public static function store()
         ";
         return $content;
     }
+    // 預覽 CSV
+    public static function preview_csv($action_id)
+    {
+        global $xoopsTpl;
+        if (!$_SESSION['can_add']) {
+            redirect_header($_SERVER['PHP_SELF'], 3, "您沒有權限使用此功能");
+        }
+
+        $action = Kyc_signup_actions::get($action_id);
+        $xoopsTpl->assign('action', $action);
+
+        // 製作標題
+        $head_row = explode("\n", $action['setup']);
+        $head = $type = [];
+        foreach ($head_row as $head_data) {
+            $cols = explode(',', $head_data);
+            if (strpos($cols[0], '#') === false) {
+                $head[] = str_replace('*', '', trim($cols[0]));
+                $type[] = trim($cols[1]);
+            }
+        }
+        // $head[] = '錄取';
+        // $head[] = '報名日期';
+        // $head[] = '身份';
+        $xoopsTpl->assign('head', $head);
+        $xoopsTpl->assign('type', $type);
+
+        // 抓取內容
+        $preview_data = [];
+        $handle = fopen($_FILES['csv']['tmp_name'], "r") or die("無法開啟");
+        while (($val = fgetcsv($handle, 1000)) !== false) {
+            $preview_data[] = mb_convert_encoding($val, 'UTF-8', 'Big5');
+        }
+        fclose($handle);
+        // Utility::dd($preview_data);
+        $xoopsTpl->assign('preview_data', $preview_data);
+
+    }
+
+    //批次匯入 CSV
+    public static function import_csv($action_id)
+    {
+        global $xoopsDB, $xoopsUser;
+        //XOOPS表單安全檢查
+        Utility::xoops_security_check();
+        // Utility::dd($_POST['tdc']);
+
+        if (!$_SESSION['can_add']) {
+            redirect_header($_SERVER['PHP_SELF'], 3, "您沒有權限使用此功能");
+        }
+        $action_id = (int) $action_id;
+        $uid = $xoopsUser->uid();
+
+        $action = Kyc_signup_actions::get($action_id);
+
+        $TadDataCenter = new TadDataCenter('kyc_signup');
+        // Utility::dd($_POST['tdc']);
+        foreach ($_POST['tdc'] as $tdc) {
+            $sql = "insert into `" . $xoopsDB->prefix("kyc_signup_data") . "` (
+            `action_id`,
+            `uid`,
+            `signup_date`,
+            `accept`
+            ) values(
+            '{$action_id}',
+            '{$uid}',
+            now(),
+            '1'
+            )";
+            $xoopsDB->queryF($sql) or Utility::web_error($sql, __FILE__, __LINE__);
+            $id = $xoopsDB->getInsertId();
+
+            $TadDataCenter->set_col('id', $id);
+            $TadDataCenter->saveCustomData($tdc);
+
+            $action['signup'] = self::get_all($action_id);
+            if (count($action['signup']) > $action['number']) {
+                $TadDataCenter->set_col('data_id', $id);
+                $TadDataCenter->saveCustomData(['tag' => ['候補']]);
+            }
+        }
+    }
 }
