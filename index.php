@@ -34,6 +34,16 @@ switch ($op) {
         Kyc_signup_data::import_csv($id);
         redirect_header("{$_SERVER['PHP_SELF']}?id=$id", 3, "成功匯入報名資料！");
         break;
+    //修改報名表單(Excel)
+    case 'kyc_signup_data_preview_excel':
+        Kyc_signup_data::preview_excel($id);
+        break;
+    // 將 Excel 資料存入資料庫
+    case 'kyc_signup_data_import_excel':
+        Kyc_signup_data::import_excel($id);
+        header("location: {$_SERVER['PHP_SELF']}?id=$id");
+        exit;
+
     //新增表單
     case 'kyc_signup_actions_create':
         Kyc_signup_actions::create();

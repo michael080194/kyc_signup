@@ -500,4 +500,73 @@ public static function store()
             }
         }
     }
+
+    // 預覽 Excel
+    public static function preview_excel($action_id)
+    {
+        global $xoopsTpl;
+        if (!$_SESSION['can_add']) {
+            redirect_header($_SERVER['PHP_SELF'], 3, "您沒有權限使用此功能");
+        }
+
+        $action = Kyc_signup_actions::get($action_id);
+        $xoopsTpl->assign('action', $action);
+
+        // 製作標題
+        $head_row = explode("\n", $action['setup']);
+        $head = $type = [];
+        foreach ($head_row as $head_data) {
+            $cols = explode(',', $head_data);
+            if (strpos($cols[0], '#') === false) {
+                $head[] = str_replace('*', '', trim($cols[0]));
+                $type[] = trim($cols[1]);
+            }
+        }
+
+        $xoopsTpl->assign('head', $head);
+        $xoopsTpl->assign('type', $type);
+
+        // 抓取內容
+        $preview_data = [];
+        require_once XOOPS_ROOT_PATH . '/modules/tadtools/vendor/phpoffice/phpexcel/Classes/PHPExcel/IOFactory.php';
+        $reader = \PHPExcel_IOFactory::createReader('Excel2007');
+
+        $PHPExcel = $reader->load($_FILES['excel']['tmp_name']); // 檔案名稱
+        $sheet = $PHPExcel->getSheet(0); // 讀取第一個工作表(編號從 0 開始)
+        $maxCell = $PHPExcel->getActiveSheet()->getHighestRowAndColumn();
+        $maxColumn = self::getIndex($maxCell['column']);
+
+        // 一次讀一列
+        for ($row = 1; $row <= $maxCell['row']; $row++) {
+            // 讀出每一格
+            for ($column = 0; $column <= $maxColumn; $column++) {
+                $preview_data[$row][$column] = $sheet->getCellByColumnAndRow($column, $row)->getCalculatedValue();
+            }
+        }
+
+        $xoopsTpl->assign('preview_data', $preview_data);
+
+        //加入Token安全機制
+        include_once $GLOBALS['xoops']->path('class/xoopsformloader.php');
+        $token = new \XoopsFormHiddenToken();
+        $token_form = $token->render();
+        $xoopsTpl->assign("token_form", $token_form);
+    }
+
+    // 將文字轉為數字
+    private static function getIndex($let)
+    {
+        // Iterate through each letter, starting at the back to increment the value
+        for ($num = 0, $i = 0; $let != ''; $let = substr($let, 0, -1), $i++) {
+            $num += (ord(substr($let, -1)) - 65) * pow(26, $i);
+        }
+
+        return $num;
+    }
+
+    // 匯入 Excel
+    public static function import_excel($action_id)
+    {
+        self::import_csv($action_id);
+    }
 }
