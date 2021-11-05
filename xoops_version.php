@@ -36,7 +36,7 @@ $modversion['system_menu'] = 1;
 
 //---模組資料表架構---//
 $modversion['sqlfile']['mysql'] = 'sql/mysql.sql';
-$modversion['tables'] = ['kyc_signup_actions','kyc_signup_data','kyc_signup_data_center'];
+$modversion['tables'] = ['kyc_signup_actions','kyc_signup_data','kyc_signup_data_center' , 'kyc_signup_files_center'];
 
 //---後台管理介面設定---//
 $modversion['hasAdmin'] = 1;
@@ -48,9 +48,9 @@ $modversion['hasMain'] = 1;
 // $modversion['sub'][] = ['name' => '子選項文字', 'url' => '子選項連結位址'];
 
 //---模組自動功能---//
-// $modversion['onInstall'] = "include/onInstall.php";
-// $modversion['onUpdate'] = "include/onUpdate.php";
-// $modversion['onUninstall'] = "include/onUninstall.php";
+$modversion['onInstall'] = "include/onInstall.php";
+$modversion['onUpdate'] = "include/onUpdate.php";
+$modversion['onUninstall'] = "include/onUninstall.php";
 
 //---樣板設定---//
 $modversion['templates'][] = ['file' => 'kyc_signup_admin.tpl', 'description' => '後台共同樣板'];
@@ -71,6 +71,26 @@ $modversion['search'] = ['file' => 'include/search.php', 'func' => 'kyc_signup_s
 //     'options' => '設定值1|設定值2',
 // ];
 
+//---區塊設定---//
+$modversion['blocks'][] = [
+    'file' => 'action_list.php',
+    'name' => '可報名活動一覽',
+    'description' => '列出所有可報名的活動',
+    'show_func' => 'action_list',
+    'template' => 'action_list.tpl',
+    'edit_func' => 'action_list_edit',
+    'options' => '5|action_date desc',
+];
+
+$modversion['blocks'][] = [
+    'file' => 'action_signup.php',
+    'name' => '活動報名焦點',
+    'description' => '可選擇某一活動讓使用者報名',
+    'show_func' => 'action_signup',
+    'template' => 'action_signup.tpl',
+    'edit_func' => 'action_signup_edit',
+    'options' => '',
+];
 //---偏好設定---//
 $modversion['config'][] = [
     'name' => 'show_number',

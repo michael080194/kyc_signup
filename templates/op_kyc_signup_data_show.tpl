@@ -17,6 +17,7 @@
     <small>
         <i class="fa fa-calendar-check-o" aria-hidden="true"></i> 報名截止日期：<{$action.end_date}>
         <i class="fa fa-users" aria-hidden="true"></i> 報名人數上限：<{$action.number}>
+        <{if $action.candidate}><span data-toggle="tooltip" title="可候補人數">(<{$action.candidate}>)</span><{/if}>
     </small>
 </h3>
 

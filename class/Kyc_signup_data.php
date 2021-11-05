@@ -61,7 +61,7 @@ class Kyc_signup_data
         $action['signup'] = Kyc_signup_data::get_all($action_id);
         if (time() > strtotime($action['end_date'])) {
             redirect_header($_SERVER['PHP_SELF'] . "?id=$action_id", 3, "已報名截止，無法再進行報名或修改報名");
-        } elseif (count($action['signup']) >= $action['number']) {
+        } elseif (count($action['signup']) >= ($action['number'] + $action['candidate'] )) {
             redirect_header($_SERVER['PHP_SELF'] . "?id=$action_id", 3, "人數已滿，無法再進行報名");
         }
 
@@ -111,6 +111,15 @@ public static function store()
     $TadDataCenter = new TadDataCenter('kyc_signup');
     $TadDataCenter->set_col('id', $id);
     $TadDataCenter->saveData();
+
+    // 若是超過名額，註記為「候補」
+    $action = Kyc_signup_actions::get($action_id, true);
+    $action['signup'] = Kyc_signup_data::get_all($action_id);
+    if (count($action['signup']) >= $action['number']) {
+        $TadDataCenter->set_col('data_id', $id);
+        $TadDataCenter->saveCustomData(['tag' => ['候補']]);
+    }
+
     return $id;
 }
 
@@ -242,6 +251,8 @@ public static function store()
             $TadDataCenter->set_col('id', $data['id']);
             $data['tdc'] = $TadDataCenter->getData();
             $data['action'] = Kyc_signup_actions::get($data['action_id'], true);
+            $TadDataCenter->set_col('data_id', $data['id']);
+            $data['tag'] = $TadDataCenter->getData('tag', 0);
             if ($_SESSION['api_mode'] or $auto_key) {
                 $data_arr[] = $data;
             } else {

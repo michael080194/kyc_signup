@@ -8,6 +8,7 @@ use XoopsModules\Tadtools\SweetAlert;
 use XoopsModules\Kyc_signup\Kyc_signup_data;
 use XoopsModules\Tadtools\BootstrapTable;
 use XoopsModules\Tadtools\CkEditor;
+use XoopsModules\Tadtools\TadUpFiles;
 
 class Kyc_signup_actions
 {
@@ -68,6 +69,11 @@ class Kyc_signup_actions
         $CkEditor->setHeight(350);
         $editor = $CkEditor->render();
         $xoopsTpl->assign('editor', $editor);
+
+        $TadUpFiles = new TadUpFiles("kyc_signup");
+        $TadUpFiles->set_col('action_id', $id);
+        $upform = $TadUpFiles->upform(true, 'upfile');
+        $xoopsTpl->assign("upform", $upform);
     }
 
     //新增資料
@@ -117,6 +123,10 @@ class Kyc_signup_actions
 
         //取得最後新增資料的流水編號
         $id = $xoopsDB->getInsertId();
+        $TadUpFiles = new TadUpFiles("kyc_signup");
+        $TadUpFiles->set_col('action_id', $id);
+        $TadUpFiles->upload_file('upfile', 1280, 240, null, null, true);
+
         return $id;
     }
 
@@ -171,17 +181,23 @@ class Kyc_signup_actions
             redirect_header($_SERVER['PHP_SELF'], 3, "您沒有權限使用此功能");
         }
 
-    $sql = "update `" . $xoopsDB->prefix("kyc_signup_actions") . "` set
-    `title` = '{$title}',
-    `detail` = '{$detail}',
-    `action_date` = '{$action_date}',
-    `end_date` = '{$end_date}',
-    `number` = '{$number}',
-    `setup` = '{$setup}',
-    `enable` = '{$enable}',
-    `uid` = '{$uid}'
-    where `id` = '$id'";
-    $xoopsDB->queryF($sql) or Utility::web_error($sql, __FILE__, __LINE__);
+        $sql = "update `" . $xoopsDB->prefix("kyc_signup_actions") . "` set
+        `title` = '{$title}',
+        `detail` = '{$detail}',
+        `action_date` = '{$action_date}',
+        `end_date` = '{$end_date}',
+        `number` = '{$number}',
+        `setup` = '{$setup}',
+        `enable` = '{$enable}',
+        `candidate` = '{$candidate}',
+        `uid` = '{$uid}'
+        where `id` = '$id'";
+        $xoopsDB->queryF($sql) or Utility::web_error($sql, __FILE__, __LINE__);
+
+        $TadUpFiles = new TadUpFiles("kyc_signup");
+        $TadUpFiles->set_col('action_id', $id);
+        $TadUpFiles->upload_file('upfile', 1280, 240, null, null, true);
+
         return $id;
     }
 
@@ -205,6 +221,11 @@ class Kyc_signup_actions
         $sql = "delete from `" . $xoopsDB->prefix("kyc_signup_actions") . "`
         where `id` = '{$id}'";
         $xoopsDB->queryF($sql) or Utility::web_error($sql, __FILE__, __LINE__);
+
+        $TadUpFiles = new TadUpFiles("kyc_signup");
+        $TadUpFiles->set_col('action_id', $id);
+        $TadUpFiles->del_files();
+
     }
 
     //以流水號取得某筆資料
@@ -227,26 +248,31 @@ class Kyc_signup_actions
             $data['title'] = $myts->htmlSpecialChars($data['title']);
         }
 
+        $TadUpFiles = new TadUpFiles("kyc_signup");
+        $TadUpFiles->set_col('action_id', $id);
+        $data['files'] = $TadUpFiles->show_files('upfile', true);
+
         return $data;
     }
 
     //取得所有資料陣列
-    public static function get_all($only_enable=true , $auto_key = false)
+    public static function get_all($only_enable=true , $auto_key = false, $show_number = 0, $order = ",`action_date` desc")
     {
         global $xoopsDB,$xoopsModuleConfig,$xoopsTpl;
         $myts = \MyTextSanitizer::getInstance();
-        $and_enable = $only_enable ? "and `enable` = '1' and `action_date` >= now()" : '';
-
-        $sql = "select * from `" . $xoopsDB->prefix("kyc_signup_actions") . "` where 1 $and_enable order by `enable`, `action_date` desc";
-        // if (!$_SESSION['api_mode']) {
+        $and_enable = $only_enable ? "and `enable` = '1' and `end_date` >= now()" : '';
+        $limit = $show_number ? "limit 0, $show_number" : "";
+        $sql = "select * from `" . $xoopsDB->prefix("kyc_signup_actions") . "` where 1 $and_enable order by `enable`
+        $order  $limit";
+        if (!$show_number) {
             //Utility::getPageBar($原sql語法, 每頁顯示幾筆資料, 最多顯示幾個頁數選項);
-            $PageBar = Utility::getPageBar($sql, $xoopsModuleConfig['show_number'], 10);
+            $PageBar = Utility::getPageBar($sql,  $xoopsModuleConfig['show_number'] , 10);
             $bar = $PageBar['bar'];
             $sql = $PageBar['sql'];
             $total = $PageBar['total'];
             $xoopsTpl->assign('bar', $bar);
             $xoopsTpl->assign('total', $total);
-        // }
+        }
 
         $result = $xoopsDB->query($sql) or Utility::web_error($sql, __FILE__, __LINE__);
         $data_arr = [];
@@ -285,7 +311,8 @@ class Kyc_signup_actions
         `number`,
         `setup`,
         `uid`,
-        `enable`
+        `enable`,
+        `candidate`
         ) values(
         '{$action['title']}_copy',
         '{$action['detail']}',
@@ -294,7 +321,8 @@ class Kyc_signup_actions
         '{$action['number']}',
         '{$action['setup']}',
         '{$uid}',
-        '0'
+        '0',
+        '{$action['candidate']}'
         )";
         $xoopsDB->queryF($sql) or Utility::web_error($sql, __FILE__, __LINE__);
 
