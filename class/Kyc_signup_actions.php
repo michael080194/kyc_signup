@@ -134,7 +134,6 @@ class Kyc_signup_actions
     public static function show($id = '')
     {
         global $xoopsDB, $xoopsTpl, $xoopsUser;
-
         if (empty($id)) {
             return;
         }

@@ -86,10 +86,11 @@ public static function store()
     Utility::xoops_security_check();
 
     $myts = \MyTextSanitizer::getInstance();
-
     foreach ($_POST as $var_name => $var_val) {
+        // echo $var_name . "==".  $var_val ."\r\n";
         $$var_name = $myts->addSlashes($var_val);
     }
+    // die(print_r($_POST));
     $action_id = (int) $action_id;
     $uid = (int) $uid;
 
@@ -454,6 +455,11 @@ public static function store()
         fclose($handle);
         // Utility::dd($preview_data);
         $xoopsTpl->assign('preview_data', $preview_data);
+        //加入Token安全機制
+        include_once $GLOBALS['xoops']->path('class/xoopsformloader.php');
+        $token = new \XoopsFormHiddenToken();
+        $token_form = $token->render();
+        $xoopsTpl->assign("token_form", $token_form);
 
     }
 
@@ -463,7 +469,6 @@ public static function store()
         global $xoopsDB, $xoopsUser;
         //XOOPS表單安全檢查
         Utility::xoops_security_check();
-        // Utility::dd($_POST['tdc']);
 
         if (!$_SESSION['can_add']) {
             redirect_header($_SERVER['PHP_SELF'], 3, "您沒有權限使用此功能");

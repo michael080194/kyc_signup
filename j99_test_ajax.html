@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<!-- <meta http-equiv="refresh" content="3">  -->
+<title>  test kyc_signup Ajax </title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<style>
+  table {
+    width:100%;
+  }
+  table, th, td {
+    border: 1px solid black;
+    border-collapse: collapse;
+  }
+  th, td {
+    padding: 15px;
+    text-align: left;
+  }
+  table#t01 tr:nth-child(even) {
+    background-color: #eee;
+  }
+  table#t01 tr:nth-child(odd) {
+   background-color: #fff;
+  }
+  table#t01 th {
+    background-color: lemonchiffon;
+    color: black;
+  }
+
+  .center {
+    margin: auto;
+    width: 60%;
+    border: 3px solid #73AD21;
+    padding: 10px;
+  }
+
+  .loader {
+    border: 16px solid #f3f3f3;
+    border-radius: 50%;
+    border-top: 16px solid #3498db;
+    width: 120px;
+    height: 120px;
+    -webkit-animation: spin 2s linear infinite; /* Safari */
+    animation: spin 2s linear infinite;
+  }
+
+  /* Safari */
+  @-webkit-keyframes spin {
+    0% { -webkit-transform: rotate(0deg); }
+    100% { -webkit-transform: rotate(360deg); }
+  }
+
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+</style>
+</head>
+<body>
+   <h2 align="center">請開啟 Browser 開發人員工具頁面;顯示結果</h2>
+
+   <div class="loader center"></div>
+    <script>
+        //  var url1="http://michael1.cp35.secserverpros.com/inventory/api/inventoryApi.php";
+         // var url1="http://localhost/modules/kyc_signup/api.php";
+         var url1="http://192.168.0.111/modules/kyc_signup/api.php";
+        $(document).ready(function () {
+          // test_login(); // 測試 login
+          // test_get_all_action(); //取得所有活動資料陣列
+          // test_get_single_action(); //取得單一活動資料陣列
+          // test_get_signup_people(); //取得單一活動的已報名者名單
+          test_get_signup_form()  // 取得報名填寫欄位的資料
+        });
+
+        function test_login(){
+          var pass0 = {};
+          pass0.op = "login";
+          pass0.username = "user5"
+          pass0.password = "user5"
+          $.ajax({
+            url: url1,
+            method:"POST",
+            data:pass0,
+            beforeSend:function(xhr) {
+
+              },
+            success:function(data, xhr, status) {
+                // console.log(data);
+                var data1 = JSON.parse(data);
+                console.log(data1)
+                msg= data1["responseStatus"];   // if  SUCCESS return content array
+                if(msg == "SUCCESS"){  // login SUCCESS
+                  alert("Login userId="+ data1["responseArray"]["userId"] + "   isAdmin=" + data1["responseArray"]["isAdmin"]);
+                } else {
+                  alert("Login 失敗");
+                }
+
+              },
+            complete:function(xhr, status) {
+                $('.loader').css('display','none');
+              },
+            error:function(xhr, status) {
+               alert("AAA")
+              }
+          })
+        }
+
+        function test_get_all_action(){
+          var pass0 = {};
+          pass0.op = "get_all_action";
+          $.ajax({
+            url: url1,
+            method:"POST",
+            data:pass0,
+            beforeSend:function(xhr) {
+
+              },
+            success:function(data, xhr, status) {
+                // console.log(data);
+                var data1 = JSON.parse(data);
+                // console.log(data1);
+                msg= data1["responseStatus"];   // if  SUCCESS return content array
+                if(msg == "SUCCESS"){  // login SUCCESS
+                  console.log(data1["responseArray"]);
+                }
+
+              },
+            complete:function(xhr, status) {
+                $('.loader').css('display','none');
+              },
+            error:function(xhr, status) {
+
+              }
+          })
+        }
+
+        function test_get_single_action(){
+          var pass0 = {};
+          pass0.op = "get_single_action";
+          pass0.action_id = 1;
+          $.ajax({
+            url: url1,
+            method:"POST",
+            data:pass0,
+            beforeSend:function(xhr) {
+
+              },
+            success:function(data, xhr, status) {
+                // console.log(data);
+                var data1 = JSON.parse(data);
+                // console.log(data);
+                msg= data1["responseStatus"];   // if  SUCCESS return content array
+                if(msg == "SUCCESS"){  // login SUCCESS
+                  console.log(data1["responseArray"]);
+                }
+
+              },
+            complete:function(xhr, status) {
+                $('.loader').css('display','none');
+              },
+            error:function(xhr, status) {
+
+              }
+          })
+        }
+
+        function test_get_signup_form(){
+          var pass0 = {};
+          pass0.op = "get_signup_form";
+          pass0.action_id = 12; // 請輸入欲操作之 活動 id
+          $.ajax({
+            url: url1,
+            method:"POST",
+            data:pass0,
+            beforeSend:function(xhr) {
+
+              },
+            success:function(data, xhr, status) {
+                // console.log(data);
+                var data1 = JSON.parse(data);
+                // console.log(data);
+                msg= data1["responseStatus"];   // if  SUCCESS return content array
+                if(msg == "SUCCESS"){  // login SUCCESS
+                  console.log(data1["responseArray"]);
+                }
+
+              },
+            complete:function(xhr, status) {
+                $('.loader').css('display','none');
+              },
+            error:function(xhr, status) {
+
+              }
+          })
+        }
+
+        function test_get_signup_people(){
+          var pass0 = {};
+          pass0.op = "get_signup_people";
+          pass0.action_id = 12 ; // 請輸入欲取得之 活動 id
+          pass0.uid = 6 ; // 登錄者的 user id
+          pass0.isAdmin = "NO" ; // 是否為管理者
+          $.ajax({
+            url: url1,
+            method:"POST",
+            data:pass0,
+            beforeSend:function(xhr) {
+
+              },
+            success:function(data, xhr, status) {
+                // console.log(data);
+                var data1 = JSON.parse(data);
+                // console.log(data);
+                msg= data1["responseStatus"];   // if  SUCCESS return content array
+                if(msg == "SUCCESS"){  // login SUCCESS
+                  console.log(data1["responseArray"]);
+                }
+
+              },
+            complete:function(xhr, status) {
+                $('.loader').css('display','none');
+              },
+            error:function(xhr, status) {
+
+              }
+          })
+        }
+
+        /*
+        function test_inqCustDetail(){
+          var pass0 = {};
+          pass0.op = "inqCustDetail";
+          pass0.comp_id = "1";
+          pass0.p_cusid = "077"
+          $.ajax({
+            url: url1,
+            method:"POST",
+            data:pass0,
+            beforeSend:function(xhr) {
+
+              },
+            success:function(data, xhr, status) {
+                console.log(data);
+                var data1 = JSON.parse(data);
+                // console.log(data);
+                msg= data1["responseStatus"];   // if  SUCCESS return content array
+                if(msg == "OK"){  // login SUCCESS
+                  // console.log(data1["responseArray"]);
+                }
+
+              },
+            complete:function(xhr, status) {
+                $('.loader').css('display','none');
+              },
+            error:function(xhr, status) {
+
+              }
+          })
+        }
+
+        function test_workno(){
+          var pass0 = {};
+          pass0.op = "inqWorkno";
+          pass0.comp_id  = "1234";
+          pass0.p_workno = "A91228028";
+
+          $.ajax({
+            url: url1,
+            method:"POST",
+            data:pass0,
+            beforeSend:function(xhr) {
+              $('.loader').css('display','none');
+              },
+            success:function(data, xhr, status) {
+              console.log(data);
+                var data1 = JSON.parse(data);
+                // console.log(data);
+                msg= data1["responseStatus"];   // if  SUCCESS return content array
+                if(msg == "OK"){  // login SUCCESS
+                  // console.log(data1["responseArray"]);
+                }
+
+              },
+            complete:function(xhr, status) {
+                $('.loader').css('display','none');
+              },
+            error:function(xhr, status) {
+
+              }
+          })
+        }
+
+        function test_inqPartno(){
+          var pass0 = {};
+          pass0.op = "inqPartno";
+          pass0.comp_id  = "1234";
+          pass0.p_partno = "KR30-09";
+          pass0.p_carid  = "";
+          $.ajax({
+            url: url1,
+            method:"POST",
+            data:pass0,
+            beforeSend:function(xhr) {
+              $('.loader').css('display','none');
+              },
+            success:function(data, xhr, status) {
+              console.log(data);
+                var data1 = JSON.parse(data);
+                // console.log(data);
+                msg= data1["responseStatus"];   // if  SUCCESS return content array
+                if(msg == "OK"){  // login SUCCESS
+                  // console.log(data1["responseArray"]);
+                }
+
+              },
+            complete:function(xhr, status) {
+                $('.loader').css('display','none');
+              },
+            error:function(xhr, status) {
+
+              }
+          })
+        }
+
+        function test_inqPartnoDetail(){
+          var pass0 = {};
+          pass0.op = "inqPartnoDetail";
+          pass0.comp_id = "1234";
+          pass0.p_partno = "KR30-09"
+          $.ajax({
+            url: url1,
+            method:"POST",
+            data:pass0,
+            beforeSend:function(xhr) {
+              $('.loader').css('display','none');
+              },
+            success:function(data, xhr, status) {
+              console.log(data);
+                var data1 = JSON.parse(data);
+                // console.log(data);
+                msg= data1["responseStatus"];   // if  SUCCESS return content array
+                if(msg == "OK"){  // login SUCCESS
+                  // console.log(data1["responseArray"]);
+                }
+
+              },
+            complete:function(xhr, status) {
+                $('.loader').css('display','none');
+              },
+            error:function(xhr, status) {
+
+              }
+          })
+        }
+
+        function list_check_data(){
+          var pass0 = {};
+          pass0.op   = "listCheckData";
+          pass0.comp_id       = "6939";
+          pass0.check_date = "2020-05-19"
+          pass0.c_house       = "01-DYSON 14:29";
+          pass0.user = "1"
+
+          $.ajax({
+            url: url1,
+            method:"POST",
+            data:pass0,
+            beforeSend:function(xhr) {
+
+              },
+            success:function(data, xhr, status) {
+                var data1 = JSON.parse(data);
+                msg= data1["responseStatus"];   // if  SUCCESS return content array
+
+                if(msg=="OK"){
+                  product= data1["responseArray"];
+                  $.each(product, function(key, value) {
+                    if ( value["c_descrp"] == null ){
+                      console.log(value["barcode"] + ":品名不存在");
+                    } else {
+                      console.log(value["barcode"] + ":" + value["c_descrp"]+ ":" + value["create_date"]);
+                    }
+                  });
+                }
+              },
+            complete:function(xhr, status) {
+                $('.loader').css('display','none');
+              },
+            error:function(xhr, status) {
+
+              }
+          })
+        }
+
+        function search_stock(){
+          var pass0 = {};
+          pass0.op   = "searchStock";
+          pass0.comp_id       = "1284";
+          pass0.c_house       = "01";
+          pass0.check_date = "2020-03-08"
+          pass0.c_partno       = "";
+          pass0.c_descrp       = "東元";
+
+          $.ajax({
+            url: url1,
+            method:"POST",
+            data:pass0,
+            beforeSend:function(xhr) {
+
+              },
+            success:function(data, xhr, status) {
+                console.log(data);
+                var data1 = JSON.parse(data);
+                status= data1["responseStatus"];   // if  SUCCESS return content array
+
+                if(status == "OK"){
+                  product= data1["responseArray"];
+                  $.each(product, function(key, value) {
+                    console.log(value["c_partno"] + ":" + value["c_descrp"]+ ":" + value["c_unit"]);
+                  });
+                } else {
+                  console.log(data1["responseMessage"]); // 查不到資料
+                }
+              },
+            complete:function(xhr, status) {
+                $('.loader').css('display','none');
+              },
+            error:function(xhr, status) {
+
+              }
+          })
+        }
+        */
+</script>
+</body>
+
+</html>
