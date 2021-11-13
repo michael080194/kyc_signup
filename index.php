@@ -17,7 +17,8 @@ $id = Request::getInt('id');
 $action_id = Request::getInt('action_id');
 $accept = Request::getInt('accept');
 $files_sn = Request::getInt('files_sn');
-
+$pdf_setup_col = Request::getString('pdf_setup_col');
+$file = Request::getWord('file','pdf');
 /*-----------執行動作判斷區----------*/
 switch ($op) {
     // 下載檔案
@@ -38,6 +39,16 @@ switch ($op) {
     case 'kyc_signup_data_preview_excel':
         Kyc_signup_data::preview_excel($id);
         break;
+    // 進行pdf的匯出設定
+    case 'kyc_signup_data_pdf_setup':
+        Kyc_signup_data::pdf_setup($id);
+        break;
+    //儲存pdf的匯出設定
+    case 'kyc_signup_data_pdf_setup_save':
+        Kyc_signup_data::pdf_setup_save($action_id, $pdf_setup_col);
+        header("location: {$file}_signup.php?id=$action_id");
+        exit;
+
     // 將 Excel 資料存入資料庫
     case 'kyc_signup_data_import_excel':
         Kyc_signup_data::import_excel($id);
@@ -125,6 +136,7 @@ switch ($op) {
             Kyc_signup_actions::index($xoopsModuleConfig['only_enable']);
             $op = 'kyc_signup_actions_index';
         } else {
+
             Kyc_signup_actions::show($id);
             $op = 'kyc_signup_actions_show';
         }

@@ -10,6 +10,7 @@ use XoopsModules\Kyc_signup\Kyc_signup_actions;
 use XoopsModules\Tadtools\TadDataCenter;
 use XoopsModules\Tadtools\SweetAlert;
 use XoopsModules\Tadtools\BootstrapTable;
+use XoopsModules\Tadtools\Tmt;
 
 class Kyc_signup_data
 {
@@ -231,18 +232,18 @@ public static function store()
     }
 
     //取得所有資料陣列
-    public static function get_all($action_id = '', $uid = '', $auto_key = false)
+    public static function get_all($action_id = '', $uid = '', $auto_key = false, $only_accept = false)
     {
         global $xoopsDB, $xoopsUser;
         $myts = \MyTextSanitizer::getInstance();
-
+        $and_accept = $only_accept ? "and `accept`='1'" : '';
         if ($action_id) {
-            $sql = "select * from `" . $xoopsDB->prefix("kyc_signup_data") . "` where `action_id`='$action_id' order by `signup_date`";
+            $sql = "select * from `" . $xoopsDB->prefix("kyc_signup_data") . "` where `action_id`='$action_id'   $and_accept  order by `signup_date`";
         } else {
             if (!$_SESSION['can_add'] or !$uid) {
                 $uid = $xoopsUser ? $xoopsUser->uid() : 0;
             }
-            $sql = "select * from `" . $xoopsDB->prefix("kyc_signup_data") . "` where `uid`='$uid' order by `signup_date`";
+            $sql = "select * from `" . $xoopsDB->prefix("kyc_signup_data") . "` where `uid`='$uid' $and_accept order by `signup_date`";
         }
 
         $result = $xoopsDB->query($sql) or Utility::web_error($sql, __FILE__, __LINE__);
@@ -431,15 +432,8 @@ public static function store()
         $xoopsTpl->assign('action', $action);
 
         // 製作標題
-        $head_row = explode("\n", $action['setup']);
-        $head = $type = [];
-        foreach ($head_row as $head_data) {
-            $cols = explode(',', $head_data);
-            if (strpos($cols[0], '#') === false) {
-                $head[] = str_replace('*', '', trim($cols[0]));
-                $type[] = trim($cols[1]);
-            }
-        }
+        list($head,$type) = self::get_head($action , true , true);
+
         // $head[] = '錄取';
         // $head[] = '報名日期';
         // $head[] = '身份';
@@ -518,15 +512,7 @@ public static function store()
         $xoopsTpl->assign('action', $action);
 
         // 製作標題
-        $head_row = explode("\n", $action['setup']);
-        $head = $type = [];
-        foreach ($head_row as $head_data) {
-            $cols = explode(',', $head_data);
-            if (strpos($cols[0], '#') === false) {
-                $head[] = str_replace('*', '', trim($cols[0]));
-                $type[] = trim($cols[1]);
-            }
-        }
+        list($head,$type) = self::get_head($action , true , true);
 
         $xoopsTpl->assign('head', $head);
         $xoopsTpl->assign('type', $type);
@@ -574,4 +560,62 @@ public static function store()
     {
         self::import_csv($action_id);
     }
+    //取得報名的標題欄
+    public static function get_head($action, $return_type = false, $only_tdc = false)
+    {
+        $head_row = explode("\n", $action['setup']);
+        $head = $type = [];
+        foreach ($head_row as $head_data) {
+            $cols = explode(',', $head_data);
+            if (strpos($cols[0], '#') === false) {
+                $head[] = str_replace('*', '', trim($cols[0]));
+                $type[] = trim($cols[1]);
+            }
+        }
+
+        if (!$only_tdc) {
+            $head[] = '錄取';
+            $head[] = '報名日期';
+            $head[] = '身份';
+        }
+
+        if ($return_type) {
+            return [$head, $type];
+        } else {
+            return $head;
+        }
+    }
+
+    //進行pdf的匯出設定
+    public static function pdf_setup($action_id)
+    {
+        global $xoopsTpl;
+
+        $action = Kyc_signup_actions::get($action_id);
+        $xoopsTpl->assign('action', $action);
+
+        $TadDataCenter = new TadDataCenter('kyc_signup');
+        $TadDataCenter->set_col('pdf_setup_id', $action_id);
+        $pdf_setup_col = $TadDataCenter->getData('pdf_setup_col', 0);
+        $to_arr = explode(',', $pdf_setup_col);
+
+        // 製作標題
+        $head_arr = self::get_head($action);
+        $from_arr = array_diff($head_arr, $to_arr);
+
+        $hidden_arr = [];
+
+        $tmt_box = Tmt::render('pdf_setup_col', $from_arr, $to_arr, $hidden_arr, true, false);
+        $xoopsTpl->assign('tmt_box', $tmt_box);
+    }
+
+    //儲存pdf的匯出設定
+    public static function pdf_setup_save($action_id, $pdf_setup_col = '')
+    {
+        $arr1[] = $pdf_setup_col;
+        $TadDataCenter = new TadDataCenter('kyc_signup');
+        $TadDataCenter->set_col('pdf_setup_id', $action_id);
+        $TadDataCenter->saveCustomData(['pdf_setup_col' => $arr1]);
+    }
+
 }

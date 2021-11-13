@@ -154,6 +154,7 @@ class Kyc_signup_actions
         BootstrapTable::render();
         $now_uid = $xoopsUser ? $xoopsUser->uid() : 0;
         $xoopsTpl->assign('now_uid', $now_uid);
+        $xoopsTpl->assign('uid', $now_uid);
     }
 
     //更新某一筆資料

@@ -204,12 +204,10 @@ function get_signup_people(){
   global $xoopsDB, $xoopsTpl, $xoopsUser;
 
   $TadDataCenter = new TadDataCenter('kyc_signup');
-
   $myts = \MyTextSanitizer::getInstance();
-  $uid = $myts->htmlSpecialChars($_POST['uid']);
+  $uid = $myts->htmlSpecialChars($_POST['userId']);
   $isAdmin = $myts->htmlSpecialChars($_POST['isAdmin']);
   $action_id = $myts->htmlSpecialChars($_POST['action_id']);
-
 
   $sql = "";
   $sql .= "(select a.id as action_id ,a.title as action_title , b.id as signup_id , b.uid as signup_uid, b.signup_date ";
@@ -237,11 +235,33 @@ function get_signup_people(){
     $sqla .= "where `col_sn` = '{$data['signup_id']}' order by sort , data_sort";
     $resultDetail = $xoopsDB->query($sqla) or Utility::web_error($sql, __FILE__, __LINE__);
     $arrtemp = [];
+    $kycnote = "";
     while ($dataDetail = $xoopsDB->fetchArray($resultDetail)) {
-      if (array_key_exists($dataDetail["data_name"], $arrtemp)) {
-        $arrtemp[$dataDetail["data_name"]] = $arrtemp[$dataDetail["data_name"]] . "," . $dataDetail["data_value"];
+      // $data['signup_uid'] // 報名者的 user_id
+      // echo $dataDetail["data_name"]."\n";
+      // substr_replace($dataDetail["data_value"],"O",3,3) ;
+      if ($dataDetail["data_name"] == "tag") {
+         $kycnote = "(候補)";
       } else {
-        $arrtemp[$dataDetail["data_name"]] = $dataDetail["data_value"];
+        if ($dataDetail["data_name"] == "姓名") {
+          if ($uid == $data['signup_uid'] || $isAdmin == "YES") {
+          }else{
+            $dataDetail["data_value"] = substr_replace($dataDetail["data_value"],"O",3,3) ;
+          }
+          $dataDetail["data_value"] = $dataDetail["data_value"].$kycnote;
+          // echo "login id=" . $uid . " signup_uid=" .$data['signup_uid'] . "  isAdmin=" . $isAdmin . " name:" . $dataDetail["data_value"] . "\n";
+        }else{
+          if ($uid == $data['signup_uid'] || $isAdmin == "YES") {
+
+          } else {
+            $dataDetail["data_value"] = "****";
+          }
+        }
+        if (array_key_exists($dataDetail["data_name"], $arrtemp)) {
+          $arrtemp[$dataDetail["data_name"]] = $arrtemp[$dataDetail["data_name"]] . "," . $dataDetail["data_value"];
+        } else {
+          $arrtemp[$dataDetail["data_name"]] = $dataDetail["data_value"];
+        }
       }
     }
     // $arr[] = [ $arrHead , $arrtemp];
@@ -255,7 +275,6 @@ function get_signup_people(){
     }
     // die(print_r($arr));
   }
-
 
   $r = [];
   if(count($arr) > 0){
@@ -437,13 +456,49 @@ function insertData(){
   $action_id = $myts->htmlSpecialChars($_POST['action_id']);
   $json = json_decode($_POST['jsonData']);
 
-  foreach($json as $jsonrows){
-     $arr = json_decode(json_encode($jsonrows),true);
-     foreach($arr as $key => $val){
-       echo($key . "==" . $val . "\n");
-     }
-  }
+  $sql = 'select mid from ' . $xoopsDB->prefix('modules') . " where dirname='kyc_signup'";
+  $result = $xoopsDB->queryF($sql) or Utility::web_error($sql, __FILE__, __LINE__);
+  list($module_id) = $xoopsDB->fetchRow($result);
 
+  $sql = "insert into `" . $xoopsDB->prefix("kyc_signup_data") . "` (
+    `action_id`,
+    `uid`,
+    `signup_date`
+    ) values(
+    '{$action_id}',
+    '{$userId}',
+    now()
+    )";
+    $xoopsDB->query($sql) or Utility::web_error($sql, __FILE__, __LINE__);
+    $col_sn = $xoopsDB->getInsertId(); // 的  id (要存到 kyc_signup_data_center 的 col_sn)
+
+    $sort = 0;
+    foreach($json as $jsonrows){
+     $arr = json_decode(json_encode($jsonrows),true);
+     // echo "sort =".$sort;
+     // (print_r($arr));
+     $col_name = "id";
+     $data_sort = 0;
+     foreach($arr as $key => $val){
+       // echo($key . "==" . $val . "\n");
+       if ($key == "參加場次") {
+          $val = substr($val, 0, -1);
+          $val_arr = explode(",",$val);
+          foreach($val_arr as $item){
+            $col_id = $module_id . "-" . $col_name . "-" . $col_sn . "-" . $key . "" . $data_sort;
+            insertDataFun($module_id,$col_name,$col_sn,$key,$item,$data_sort,$col_id,$sort);
+            $data_sort ++;
+          }
+       } else {
+         $col_id = $module_id . "-" . $col_name . "-" . $col_sn . "-" . $key . "" . $data_sort;
+         insertDataFun($module_id,$col_name,$col_sn,$key,$val,$data_sort,$col_id,$sort);
+       }
+       $sort++;
+       $data_sort = 0;
+    }
+  }
+// die();
+  /*
   //----主機時間 -----------------
   $fill_time=date("Y-m-d  H:i:00",strtotime("now"));
   $_POST['ssn'] = intval($_POST['ssn']);
@@ -451,19 +506,26 @@ function insertData(){
   $_POST['ofsn'] = intval($_POST['ofsn']);
   $_POST['man_name']=$myts->addSlashes($_POST['man_name']);
   $_POST['email']=$myts->addSlashes($_POST['email']);
+  */
 
-
-  $r=array();
+  $r = [];
   $r['responseStatus'] = "SUCCESS";
-  if($op_type== "ADD") {
-    $r['responseMessage'] = "新增成功";
-  } else {
-    $r['responseMessage'] = "更新成功";
-  }
-  // echo json_encode($r);
+  $r['responseMessage'] = "報名完成";
+  $r['responseArray'] = "";
   return json_encode($r, JSON_UNESCAPED_UNICODE);
 }
+#######################################
+# 寫入使用者從手機所填寫的報名資料
+#######################################
+function insertDataFun($module_id,$col_name,$col_sn,$key,$val,$data_sort,$col_id,$sort){
+  global $xoopsDB;
+  $sql = "insert into `" . $xoopsDB->prefix("kyc_signup_data_center") . "`
+  (`mid` , `col_name` , `col_sn` , `data_name` , `data_value` , `data_sort`, `col_id` , `sort`, `update_time`)
+  values('{$module_id}' , '{$col_name}' , '{$col_sn}' , '{$key}' , '{$val}' , '{$data_sort}' , '{$col_id}' , '{$sort}' , now())";
 
+  $xoopsDB->queryF($sql) or Utility::web_error($sql, __FILE__, __LINE__);
+
+}
 ############㕔############################################################
  #  產生訊息檔,以供 debug
  ########################################################################
