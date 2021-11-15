@@ -355,18 +355,18 @@ class Kyc_signup_api extends SimpleRest
         $r['responseArray'] = "";
         return $this->encodeJson($r);
     }
-#######################################
-# 寫入使用者從手機所填寫的報名資料
-#######################################
-function insertDataFun($module_id,$col_name,$col_sn,$key,$val,$data_sort,$col_id,$sort){
-    global $xoopsDB;
-    $sql = "insert into `" . $xoopsDB->prefix("kyc_signup_data_center") . "`
-    (`mid` , `col_name` , `col_sn` , `data_name` , `data_value` , `data_sort`, `col_id` , `sort`, `update_time`)
-    values('{$module_id}' , '{$col_name}' , '{$col_sn}' , '{$key}' , '{$val}' , '{$data_sort}' , '{$col_id}' , '{$sort}' , now())";
+    #######################################
+    # 寫入使用者從手機所填寫的報名資料
+    #######################################
+    function insertDataFun($module_id,$col_name,$col_sn,$key,$val,$data_sort,$col_id,$sort){
+        global $xoopsDB;
+        $sql = "insert into `" . $xoopsDB->prefix("kyc_signup_data_center") . "`
+        (`mid` , `col_name` , `col_sn` , `data_name` , `data_value` , `data_sort`, `col_id` , `sort`, `update_time`)
+        values('{$module_id}' , '{$col_name}' , '{$col_sn}' , '{$key}' , '{$val}' , '{$data_sort}' , '{$col_id}' , '{$sort}' , now())";
 
-    $xoopsDB->queryF($sql) or Utility::web_error($sql, __FILE__, __LINE__);
+        $xoopsDB->queryF($sql) or Utility::web_error($sql, __FILE__, __LINE__);
 
-  }
+    }
     #######################################
     # 取得欄位設定
     #######################################
@@ -489,5 +489,37 @@ function insertDataFun($module_id,$col_name,$col_sn,$key,$val,$data_sort,$col_id
         }
 
         return $ret_data;
+    }
+
+    // 我的報名歷史資料
+    public function kyc_signup_my_record($userId)
+    {
+        global $xoopsDB, $xoopsUser;
+        $sql = "";
+        $sql .= "select a.* , b.* ";
+        $sql .= "from `" . $xoopsDB->prefix("kyc_signup_data") . "` as a ";
+        $sql .= "LEFT JOIN `" . $xoopsDB->prefix("kyc_signup_actions") . "` as b ";
+        $sql .= "ON a.action_id = b.id ";
+        $sql .= "where a.`uid` = '{$userId}' ";
+        $result = $xoopsDB->query($sql) or Utility::web_error($sql, __FILE__, __LINE__);
+        $my_signup = [];
+        while ($data = $xoopsDB->fetchArray($result)) {
+            if ($data['accept'] === '1') {
+                $data['accept_name'] = '錄取';
+            } elseif ($data['accept'] === '0') {
+                $data['accept_name'] = '未錄取';
+            } else {
+                $data['accept_name'] = '尚未設定';
+            }
+            $data['action_date'] = substr($data['action_date'], 0, -3);
+            $data['signup_date'] = substr($data['signup_date'], 0, -3);
+            $my_signup[] = $data;
+        }
+
+        $r = [];
+        $r['responseStatus'] = "SUCCESS";
+        $r['responseMessage'] = "資料抓取成功";
+        $r['responseArray'] = $my_signup;
+        return $this->encodeJson($r);
     }
 }

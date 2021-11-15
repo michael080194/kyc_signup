@@ -69,8 +69,9 @@
           // test_kyc_signup_login_check(); // 測試 使用者登入,帳號及密碼檢查,登錄成功回傳token
           // test_kyc_signup_actions_get_all(); //取得所有活動資料陣列
           // test_kyc_signup_action_get(); //取得單一活動所有資料
-          test_kyc_signup_data_get_people(); //取得單一活動的已報名者名單
+          // test_kyc_signup_data_get_people(); //取得單一活動的已報名者名單
           // test_kyc_signup_form()  // 取得報名填寫欄位的資料
+          test_kyc_signup_my_record()  // 取得我的報名歷史資料
         });
 
         function test_kyc_signup_login_check(){
@@ -204,6 +205,36 @@
           pass0.action_id = 12 ; // 請輸入欲取得之 活動 id
           pass0.userId = 6 ; // 登錄者的 user id
           pass0.isAdmin = "NO" ; // 是否為管理者
+          $.ajax({
+            url: url1,
+            method:"POST",
+            data:pass0,
+            beforeSend:function(xhr) {
+
+              },
+            success:function(data, xhr, status) {
+                console.log(data);
+                var data1 = JSON.parse(data);
+                // console.log(data);
+                msg= data1["responseStatus"];   // if  SUCCESS return content array
+                if(msg == "SUCCESS"){  // login SUCCESS
+                  console.log(data1["responseArray"]);
+                }
+
+              },
+            complete:function(xhr, status) {
+                $('.loader').css('display','none');
+              },
+            error:function(xhr, status) {
+
+              }
+          })
+        }
+
+        function test_kyc_signup_my_record(){
+          var pass0 = {};
+          pass0.op = "kyc_signup_my_record";
+          pass0.userId = 2;
           $.ajax({
             url: url1,
             method:"POST",

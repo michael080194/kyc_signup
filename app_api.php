@@ -39,6 +39,9 @@ switch ($op) {
     case "kyc_signup_data_insert": // 寫入使用者從手機所填寫的報名資料
         echo $api->kyc_signup_data_insert($userId , $action_id , $signupFormJsonData);
         break;
+    case "kyc_signup_my_record": // 我的報名歷史資料
+        echo $api->kyc_signup_my_record($userId);
+        break;
     default:
         echo $api->user();
         break;
