@@ -25,7 +25,7 @@ switch ($op) {
     case 'kyc_signup_actions_store':
         $id = Kyc_signup_actions::store();
         // header("location: {$_SERVER['PHP_SELF']}?id=$id");
-        redirect_header($_SERVER['PHP_SELF'] . "?id=$id", 3, "成功建立活動！");
+        redirect_header($_SERVER['PHP_SELF'] . "?id=$id", 3,  _MA_KYC_SIGNUP_CREATE_SUCCESS);
         exit;
 
     //修改用表單
@@ -38,14 +38,14 @@ switch ($op) {
     case 'kyc_signup_actions_update':
         Kyc_signup_actions::update($id);
         // header("location: {$_SERVER['PHP_SELF']}?id=$id");
-        redirect_header($_SERVER['PHP_SELF'] . "?id=$id", 3, "成功修改活動！");
+        redirect_header($_SERVER['PHP_SELF'] . "?id=$id", 3, _MA_KYC_SIGNUP_UPDATE_SUCCESS);
         exit;
 
     //刪除資料
     case 'kyc_signup_actions_destroy':
         Kyc_signup_actions::destroy($id);
         // header("location: {$_SERVER['PHP_SELF']}");
-        redirect_header($_SERVER['PHP_SELF'], 3, "成功刪除活動！");
+        redirect_header($_SERVER['PHP_SELF'], 3, _MA_KYC_SIGNUP_DESTROY_SUCCESS);
         exit;
 
     default:

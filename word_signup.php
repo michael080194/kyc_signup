@@ -7,14 +7,14 @@ use XoopsModules\Tadtools\TadDataCenter;
 /*-----------引入檔案區--------------*/
 require_once __DIR__ . '/header.php';
 if (!$_SESSION['can_add']) {
- redirect_header($_SERVER['PHP_SELF'], 3, "您沒有權限使用此功能");
+ redirect_header($_SERVER['PHP_SELF'], 3, _TAD_PERMISSION_DENIED);
 }
 $id = Request::getInt('id');
 $action = Kyc_signup_actions::get($id);
 
 require_once XOOPS_ROOT_PATH . '/modules/tadtools/vendor/autoload.php';
 $phpWord = new \PhpOffice\PhpWord\PhpWord();
-$phpWord->setDefaultFontName('標楷體'); //設定預設字型
+$phpWord->setDefaultFontName('DFKai-SB'); //設定預設字型
 $phpWord->setDefaultFontSize(12); //設定預設字型大小
 // $header  = $section->addHeader(); //頁首
 // $footer  = $section->addFooter(); //頁尾
@@ -49,13 +49,13 @@ $phpWord->addTitleStyle($depth, $TitleStyle, $paraStyle); //設定標題N樣式
 //$section->addTitle('標題文字', $depth); //新增標題
 
 //產生內容
-$title = "{$action['title']}簽到表";
+$title = $action['title'] . _MD_KYC_SIGNUP_SIGNIN_TABLE;
 $section->addTextBreak(1);
 $section->addTitle($title, 1); //新增標題
 $section->addTextBreak(1);
 
 $section->addTextBreak(1);
-$section->addText("活動日期：{$action['action_date']}", $fontStyle, $left_paraStyle);
+$section->addText(_MD_KYC_SIGNUP_ACTION_DATE . _TAD_FOR . $action['action_date'], $fontStyle, $left_paraStyle);
 
 $TadDataCenter = new TadDataCenter('kyc_signup');
 $TadDataCenter->set_col('pdf_setup_id', $id);
@@ -70,11 +70,11 @@ $w = 10.6 / $col_count;
 
 $table = $section->addTable($tableStyle);
 $table->addRow();
-$table->addCell(Converter::cmToTwip(1.5), $cellStyle)->addText('編號', $fontStyle, $paraStyle);
+$table->addCell(Converter::cmToTwip(1.5), $cellStyle)->addText(_MD_KYC_SIGNUP_ID, $fontStyle, $paraStyle);
 foreach ($col_arr as $col_name) {
     $table->addCell(Converter::cmToTwip($w), $cellStyle)->addText($col_name, $fontStyle, $paraStyle);
 }
-$table->addCell(Converter::cmToTwip(4.5), $cellStyle)->addText('簽名', $fontStyle, $paraStyle);
+$table->addCell(Converter::cmToTwip(4.5), $cellStyle)->addText(_MD_KYC_SIGNUP_SIGNIN, $fontStyle, $paraStyle);
 
 $signup = Kyc_signup_data::get_all($action['id'], null, true, true);
 $i = 1;

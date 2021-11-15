@@ -2,11 +2,11 @@
 $modversion = [];
 
 //---模組基本資訊---//
-$modversion['name'] = '活動報名';
+$modversion['name'] = _MI_KYC_SIGNUP_NAME;
 $modversion['version'] = 1.00;
-$modversion['description'] = '活動報名模組說明';
+$modversion['description'] = _MI_KYC_SIGNUP_DESCRIPTION;
 $modversion['author'] = 'michael';
-$modversion['credits'] = '相關有功人員';
+$modversion['credits'] = '';
 $modversion['help'] = 'page=help';
 $modversion['license'] = 'GNU GPL 2.0';
 $modversion['license_url'] = 'www.gnu.org/licenses/gpl-2.0.html/';
@@ -15,18 +15,18 @@ $modversion['dirname'] = basename(dirname(__FILE__));
 
 //---模組狀態資訊---//
 $modversion['release_date'] = '年/月/日';
-$modversion['module_website_url'] = 'http://模組官網網址';
+$modversion['module_website_url'] = 'https://github.com/michael/kyc_sign_up';
 $modversion['module_website_name'] = '模組官網名稱';
 $modversion['module_status'] = 'release';
-$modversion['author_website_url'] = 'http://作者網站網址';
-$modversion['author_website_name'] = '作者網站名稱';
+$modversion['author_website_url'] = 'https://www.kyc168.com.tw/r.html';
+$modversion['author_website_name'] = _MI_KYC_SIGNUP_AUTHOR_WEBSITE_NAME;
 $modversion['min_php'] = 5.4;
 $modversion['min_xoops'] = '2.5';
 
 //---paypal資訊---//
 $modversion['paypal'][] = [
-    'business' => '作者@的Email',
-    'item_name' => 'Donation : 贊助對象名稱',
+    'business' => 'michael080194@gmail.com',
+    'item_name' => 'Donation : michael',
     'amount' => 0,
     'currency_code' => 'USD',
 ];
@@ -53,8 +53,8 @@ $modversion['onUpdate'] = "include/onUpdate.php";
 $modversion['onUninstall'] = "include/onUninstall.php";
 
 //---樣板設定---//
-$modversion['templates'][] = ['file' => 'kyc_signup_admin.tpl', 'description' => '後台共同樣板'];
-$modversion['templates'][] = ['file' => 'kyc_signup_index.tpl', 'description' => '前台共同樣板'];
+$modversion['templates'][] = ['file' => 'kyc_signup_admin.tpl', 'description' => _MI_KYC_SIGNUP_TEMPLATES_ADMIN];
+$modversion['templates'][] = ['file' => 'kyc_signup_index.tpl', 'description' => _MI_KYC_SIGNUP_TEMPLATES_INDEX];
 
 //---搜尋---//
 $modversion['hasSearch'] = 1;
@@ -74,8 +74,8 @@ $modversion['search'] = ['file' => 'include/search.php', 'func' => 'kyc_signup_s
 //---區塊設定---//
 $modversion['blocks'][] = [
     'file' => 'action_list.php',
-    'name' => '可報名活動一覽',
-    'description' => '列出所有可報名的活動',
+    'name' => _MI_KYC_SIGNUP_ACTION_LIST_NAME,
+    'description' => _MI_KYC_SIGNUP_ACTION_LIST_DESCRIPTION,
     'show_func' => 'action_list',
     'template' => 'action_list.tpl',
     'edit_func' => 'action_list_edit',
@@ -84,8 +84,8 @@ $modversion['blocks'][] = [
 
 $modversion['blocks'][] = [
     'file' => 'action_signup.php',
-    'name' => '活動報名焦點',
-    'description' => '可選擇某一活動讓使用者報名',
+    'name' => _MI_KYC_SIGNUP_ACTION_SIGNUP_NAME,
+    'description' => _MI_KYC_SIGNUP_ACTION_SIGNUP_DESCRIPTION,
     'show_func' => 'action_signup',
     'template' => 'action_signup.tpl',
     'edit_func' => 'action_signup_edit',

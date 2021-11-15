@@ -5,7 +5,7 @@
      <i class="fa fa-times text-danger" aria-hidden="true"></i>
  <{/if}>
  <{$action.title}>
- <small><i class="fa fa-calendar" aria-hidden="true"></i> 活動日期：<{$action.action_date}></small>
+ <small><i class="fa fa-calendar" aria-hidden="true"></i> <{$smarty.const._MD_KYC_SIGNUP_ACTION_DATE}><{$smarty.const._TAD_FOR}><{$action.action_date}></small>
 </h2>
 
 <div class="alert alert-info">
@@ -13,11 +13,11 @@
 </div>
 
 <h3 class="my">
- 報名表
+<{$smarty.const._MD_KYC_SIGNUP_APPLY_FORM}>
  <small>
-     <i class="fa fa-calendar-check-o" aria-hidden="true"></i> 報名截止日期：<{$action.end_date}>
-     <i class="fa fa-users" aria-hidden="true"></i> 報名人數上限：<{$action.number}>
-     <{if $action.candidate}><span data-toggle="tooltip" title="可候補人數">(<{$action.candidate}>)</span><{/if}>
+     <i class="fa fa-calendar-check-o" aria-hidden="true"></i> <{$smarty.const._MD_KYC_SIGNUP_END_DATE_COL}><{$smarty.const._TAD_FOR}><{$action.end_date}>
+     <i class="fa fa-users" aria-hidden="true"></i> <{$smarty.const._MD_KYC_SIGNUP_APPLY_MAX}><{$smarty.const._TAD_FOR}><{$action.number}>
+     <{if $action.candidate}><span data-toggle="tooltip" title="<{$smarty.const._MD_KYC_SIGNUP_CANDIDATES_QUOTA}>">(<{$action.candidate}>)</span><{/if}>
  </small>
 </h3>
 
@@ -39,6 +39,6 @@
 
 <{if $smarty.session.can_add}>
     <div class="bar">
-        <a href="<{$xoops_url}>/modules/kyc_signup/index.php?op=kyc_signup_actions_edit&id=<{$action.id}>" class="btn btn-warning"><i class="fa fa-pencil" aria-hidden="true"></i> 編輯活動</a>
+        <a href="<{$xoops_url}>/modules/kyc_signup/index.php?op=kyc_signup_actions_edit&id=<{$action.id}>" class="btn btn-warning"><i class="fa fa-pencil" aria-hidden="true"></i><{$smarty.const._MD_KYC_SIGNUP_EDIT_ACTION}></a>
     </div>
 <{/if}>

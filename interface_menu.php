@@ -16,8 +16,8 @@ $interface_menu[_TAD_TO_MOD] = "index.php";
 $interface_icon[_TAD_TO_MOD] = "fa-chevron-right";
 
 if ($xoopsUser) {
-    $interface_menu['我的報名紀錄'] = "my_signup.php";
-    $interface_icon['我的報名紀錄'] = "fa-chevron-right";
+    $interface_menu[_MD_KYC_SIGNUP_MY_RECORD] = "my_signup.php";
+    $interface_icon[_MD_KYC_SIGNUP_MY_RECORD] = "fa-chevron-right";
 }
 
 //模組後台

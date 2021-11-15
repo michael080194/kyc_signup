@@ -32,7 +32,7 @@ class Kyc_signup_data
         //抓取預設值
         $db_values = empty($id) ? [] : self::get($id);
         if ($id and empty($db_values)) {
-            redirect_header($_SERVER['PHP_SELF'] . "?id={$action_id}", 3, "查無報名無資料，無法修改");
+            redirect_header($_SERVER['PHP_SELF'] . "?id={$action_id}", 3, _MD_KYC_SIGNUP_CANNOT_BE_MODIFIED);
         }
         foreach ($db_values as $col_name => $col_val) {
             $$col_name = $col_val;
@@ -53,19 +53,15 @@ class Kyc_signup_data
         $xoopsTpl->assign("token_form", $token_form);
 
         $action = Kyc_signup_actions::get($action_id , true);
-        if (!$action['enable']) {
-            redirect_header($_SERVER['PHP_SELF'] . "?id=$action_id", 3, "該報名已關閉，無法再進行報名或修改報名");
-        } elseif (time() > strtotime($action['end_date'])) {
-            redirect_header($_SERVER['PHP_SELF'] . "?id=$action_id", 3, "已報名截止，無法再進行報名或修改報名");
-        }
+        $signup = Kyc_signup_data::get_all($action_id);
 
-        $action['signup'] = Kyc_signup_data::get_all($action_id);
         if (time() > strtotime($action['end_date'])) {
-            redirect_header($_SERVER['PHP_SELF'] . "?id=$action_id", 3, "已報名截止，無法再進行報名或修改報名");
-        } elseif (count($action['signup']) >= ($action['number'] + $action['candidate'] )) {
-            redirect_header($_SERVER['PHP_SELF'] . "?id=$action_id", 3, "人數已滿，無法再進行報名");
+            redirect_header($_SERVER['PHP_SELF'], 3, _MD_KYC_SIGNUP_END);
+        } elseif (!$action['enable']) {
+            redirect_header($_SERVER['PHP_SELF'], 3, _MD_KYC_SIGNUP_CLOSED);
+        } elseif (count($signup) >= ($action['number'] + $action['candidate'])) {
+            redirect_header($_SERVER['PHP_SELF'], 3, _MD_KYC_SIGNUP_FULL);
         }
-
         $xoopsTpl->assign('action', $action);
 
         $uid = $xoopsUser ? $xoopsUser->uid() : 0;
@@ -119,7 +115,7 @@ public static function store()
     $action['signup'] = Kyc_signup_data::get_all($action_id);
     if (count($action['signup']) >= $action['number']) {
         $TadDataCenter->set_col('data_id', $id);
-        $TadDataCenter->saveCustomData(['tag' => ['候補']]);
+        $TadDataCenter->saveCustomData(['tag' => [_MD_KYC_SIGNUP_CANDIDATE]]);
     }
 
     return $id;
@@ -137,8 +133,8 @@ public static function store()
         $id = (int) $id;
         $data = self::get($id, $uid);
 
-        if ($id and empty($data)) {
-            redirect_header($_SERVER['PHP_SELF'] . "?id={$action_id}", 3, "查無報名無資料，無法修改");
+        if (empty($data)) {
+            redirect_header($_SERVER['PHP_SELF'], 3, _MD_KYC_SIGNUP_CANT_WATCH);
         }
 
         $myts = \MyTextSanitizer::getInstance();
@@ -278,7 +274,7 @@ public static function store()
         global $xoopsDB;
 
         if (!$_SESSION['can_add']) {
-            redirect_header($_SERVER['PHP_SELF'], 3, "您沒有權限使用此功能");
+            redirect_header($_SERVER['PHP_SELF'], 3, _TAD_PERMISSION_DENIED);
         }
 
         $id = (int) $id;
@@ -291,7 +287,7 @@ public static function store()
     }
 
     //立即寄出
-    public static function send($title = "無標題", $content = "無內容", $email = "")
+    public static function send($title = _MD_KYC_SIGNUP_NO_TITLE, $content = _MD_KYC_SIGNUP_NO_CONTENT, $email = "")
     {
         global $xoopsUser;
         if (empty($email)) {
@@ -310,7 +306,7 @@ public static function store()
         global $xoopsUser;
         $id = (int) $id;
         if (empty($id)) {
-            redirect_header($_SERVER['PHP_SELF'], 3, "無編號，無法寄送通知信");
+            redirect_header($_SERVER['PHP_SELF'], 3, _MD_KYC_SIGNUP_UNABLE_TO_SEND);
         }
         $signup = $signup ? $signup : self::get($id);
 
@@ -325,25 +321,25 @@ public static function store()
         $adm_email = $admUser->email();
 
         if ($type == 'destroy') {
-            $title = "「{$action['title']}」取消報名通知";
-            $head = "<p>您於 {$signup['signup_date']} 報名「{$action['title']}」活動已於 {$now} 由 {$name} 取消報名。</p>";
-            $foot = "欲重新報名，請連至 " . XOOPS_URL . "/modules/kyc_signup/index.php?op=kyc_signup_data_create&action_id={$action['id']}";
+            $title = sprintf(_MD_KYC_SIGNUP_DESTROY_TITLE, $action['title']);
+            $head = sprintf(_MD_KYC_SIGNUP_DESTROY_HEAD, $signup['signup_date'], $action['title'], $now, $name);
+            $foot = _MD_KYC_SIGNUP_DESTROY_FOOT . XOOPS_URL . "/modules/kyc_signup/index.php?op=kyc_signup_data_create&action_id={$action['id']}";
         } elseif ($type == 'store') {
-            $title = "「{$action['title']}」報名完成通知";
-            $head = "<p>您於 {$signup['signup_date']} 報名「{$action['title']}」活動已於 {$now} 由 {$name} 報名完成。</p>";
-            $foot = "完整詳情，請連至 " . XOOPS_URL . "/modules/kyc_signup/index.php?op=kyc_signup_data_show&id={$signup['id']}";
+            $title = sprintf(_MD_KYC_SIGNUP_STORE_TITLE, $action['title']);
+            $head = sprintf(_MD_KYC_SIGNUP_STORE_HEAD, $signup['signup_date'], $action['title'], $now, $name);
+            $foot = _MD_KYC_SIGNUP_FOOT . XOOPS_URL . "/modules/kyc_signup/index.php?id={$signup['action_id']}";
         } elseif ($type == 'update') {
-            $title = "「{$action['title']}」修改報名資料通知";
-            $head = "<p>您於 {$signup['signup_date']} 報名「{$action['title']}」活動已於 {$now} 由 {$name} 修改報名資料如下：</p>";
-            $foot = "完整詳情，請連至 " . XOOPS_URL . "/modules/kyc_signup/index.php?op=kyc_signup_data_show&id={$signup['id']}";
+            $title = sprintf(_MD_KYC_SIGNUP_UPDATE_TITLE, $action['title']);
+            $head = sprintf(_MD_KYC_SIGNUP_UPDATE_HEAD, $signup['signup_date'], $action['title'], $now, $name);
+            $foot = _MD_KYC_SIGNUP_FOOT . XOOPS_URL . "/modules/kyc_signup/index.php?id={$signup['action_id']}";
         } elseif ($type == 'accept') {
-            $title = "「{$action['title']}」報名錄取狀況通知";
+            $title = sprintf(_MD_KYC_SIGNUP_ACCEPT_TITLE, $action['title']);
             if ($signup['accept'] == 1) {
-                $head = "<p>您於 {$signup['signup_date']} 報名「{$action['title']}」活動經審核，<h2 style='color:blue'>恭喜錄取！</h2>您的報名資料如下：</p>";
+                $head = sprintf(_MD_KYC_SIGNUP_ACCEPT_HEAD1, $signup['signup_date'], $action['title']);
             } else {
-                $head = "<p>您於 {$signup['signup_date']} 報名「{$action['title']}」活動經審核，很遺憾的通知您，因名額有限，<span style='color:red;'>您並未錄取。</span>您的報名資料如下：</p>";
+                $head = sprintf(_MD_KYC_SIGNUP_ACCEPT_HEAD0, $signup['signup_date'], $action['title']);
             }
-            $foot = "完整詳情，請連至 " . XOOPS_URL . "/modules/kyc_signup/index.php?id={$signup['action_id']}";
+            $foot = _MD_KYC_SIGNUP_FOOT . XOOPS_URL . "/modules/kyc_signup/index.php?id={$signup['action_id']}";
 
             $signupUser = $member_handler->getUser($signup['uid']);
             $email = $signupUser->email();
@@ -351,7 +347,7 @@ public static function store()
 
         $content = self::mk_content($id, $head, $foot, $action);
         if (!self::send($title, $content, $email)) {
-            redirect_header($_SERVER['PHP_SELF'], 3, "通知信寄發失敗！");
+            redirect_header($_SERVER['PHP_SELF'], 3, _MD_KYC_SIGNUP_FAILED_TO_SEND);
         }
         self::send($title, $content, $adm_email);
     }
@@ -411,7 +407,7 @@ public static function store()
             <body>
             $head
             <h2>{$action['title']}</h2>
-            <div>活動日期：{$action['action_date']}</div>
+            <div>" . _MD_KYC_SIGNUP_ACTION_DATE . _TAD_FOR . "{$action['action_date']}</div>
             <div class='well'>{$action['detail']}</div>
             $table
             $foot
@@ -425,7 +421,7 @@ public static function store()
     {
         global $xoopsTpl;
         if (!$_SESSION['can_add']) {
-            redirect_header($_SERVER['PHP_SELF'], 3, "您沒有權限使用此功能");
+            redirect_header($_SERVER['PHP_SELF'], 3, _TAD_PERMISSION_DENIED);
         }
 
         $action = Kyc_signup_actions::get($action_id);
@@ -442,7 +438,7 @@ public static function store()
 
         // 抓取內容
         $preview_data = [];
-        $handle = fopen($_FILES['csv']['tmp_name'], "r") or die("無法開啟");
+        $handle = fopen($_FILES['csv']['tmp_name'], "r") or die(_MD_KYC_SIGNUP_UNABLE_TO_OPEN);
         while (($val = fgetcsv($handle, 1000)) !== false) {
             $preview_data[] = mb_convert_encoding($val, 'UTF-8', 'Big5');
         }
@@ -465,7 +461,7 @@ public static function store()
         Utility::xoops_security_check();
 
         if (!$_SESSION['can_add']) {
-            redirect_header($_SERVER['PHP_SELF'], 3, "您沒有權限使用此功能");
+            redirect_header($_SERVER['PHP_SELF'], 3, _TAD_PERMISSION_DENIED);
         }
         $action_id = (int) $action_id;
         $uid = $xoopsUser->uid();
@@ -495,7 +491,7 @@ public static function store()
             $action['signup'] = self::get_all($action_id);
             if (count($action['signup']) > $action['number']) {
                 $TadDataCenter->set_col('data_id', $id);
-                $TadDataCenter->saveCustomData(['tag' => ['候補']]);
+                $TadDataCenter->saveCustomData(['tag' => [_MD_KYC_SIGNUP_CANDIDATE]]);
             }
         }
     }
@@ -505,7 +501,7 @@ public static function store()
     {
         global $xoopsTpl;
         if (!$_SESSION['can_add']) {
-            redirect_header($_SERVER['PHP_SELF'], 3, "您沒有權限使用此功能");
+            redirect_header($_SERVER['PHP_SELF'], 3, _TAD_PERMISSION_DENIED);
         }
 
         $action = Kyc_signup_actions::get($action_id);
@@ -574,9 +570,9 @@ public static function store()
         }
 
         if (!$only_tdc) {
-            $head[] = '錄取';
-            $head[] = '報名日期';
-            $head[] = '身份';
+            $head[] = _MD_KYC_SIGNUP_ACCEPT;
+            $head[] = _MD_KYC_SIGNUP_APPLY_DATE;
+            $head[] = _MD_KYC_SIGNUP_IDENTITY;
         }
 
         if ($return_type) {

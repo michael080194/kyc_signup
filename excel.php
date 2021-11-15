@@ -6,7 +6,7 @@ use XoopsModules\Kyc_signup\Kyc_signup_data;
 require_once __DIR__ . '/header.php';
 
 if (!$_SESSION['can_add']) {
-    redirect_header($_SERVER['PHP_SELF'], 3, "您沒有權限使用此功能");
+    redirect_header($_SERVER['PHP_SELF'], 3, _TAD_PERMISSION_DENIED);
 }
 
 $id = Request::getInt('id');
@@ -14,7 +14,7 @@ $type = Request::getString('type');
 
 $action = Kyc_signup_actions::get($id);
 if ($action['uid'] != $xoopsUser->uid()) {
-    redirect_header($_SERVER['PHP_SELF'], 3, "您沒有權限使用此功能");
+    redirect_header($_SERVER['PHP_SELF'], 3, _TAD_PERMISSION_DENIED);
 }
 
 require_once XOOPS_ROOT_PATH . '/modules/tadtools/vendor/phpoffice/phpexcel/Classes/PHPExcel.php'; //引入 PHPExcel 物件庫
@@ -96,12 +96,12 @@ if ($type == 'signup') {
      }
 
      if ($signup_data['accept'] === '1') {
-         $iteam[] = '錄取';
-     } elseif ($signup_data['accept'] === '0') {
-         $iteam[] = '未錄取';
-     } else {
-         $iteam[] = '尚未設定';
-     }
+        $iteam[] = _MD_KYC_SIGNUP_ACCEPT;
+    } elseif ($signup_data['accept'] === '0') {
+        $iteam[] = _MD_KYC_SIGNUP_NOT_ACCEPT;
+    } else {
+        $iteam[] = _MD_KYC_SIGNUP_ACCEPT_NOT_YET;
+    }
      $iteam[] = $signup_data['signup_date'];
      $iteam[] = $signup_data['tag'];
 
@@ -122,7 +122,7 @@ if ($type == 'signup') {
 
 // $title = (_CHARSET === 'UTF-8') ? iconv('UTF-8', 'Big5', $title) : $title;
 header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-header("Content-Disposition: attachment;filename={$title}.xlsx");
+header("Content-Disposition: attachment;filename={$title}" . _MD_KYC_SIGNUP_APPLY_LIST . ".xlsx");
 header('Cache-Control: max-age=0');
 $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
 

@@ -19,7 +19,7 @@ function xoops_module_install_kyc_signup(XoopsModule $module)
     Utility::mk_dir(XOOPS_ROOT_PATH . "/uploads/kyc_signup/image");
     Utility::mk_dir(XOOPS_ROOT_PATH . "/uploads/kyc_signup/image/.thumbs");
 
-    $groupid = Update::mk_group("活動報名管理");
+    $groupid = Update::mk_group(_MD_KYC_SIGNUP_ADMIN);
     $perm_handler = xoops_getHandler('groupperm');
     $perm = $perm_handler->create();
     $perm->setVar('gperm_groupid', $groupid);

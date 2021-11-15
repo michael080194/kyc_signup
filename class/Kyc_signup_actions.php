@@ -29,16 +29,17 @@ class Kyc_signup_actions
     {
         global $xoopsTpl, $xoopsUser;
         if (!$_SESSION['can_add']) {
-            redirect_header($_SERVER['PHP_SELF'], 3, "非管理員，無法執行此動作");
+            redirect_header($_SERVER['PHP_SELF'], 3, _TAD_PERMISSION_DENIED);
         }
 
         $now_uid = $xoopsUser ? $xoopsUser->uid() : 0;
+        $uid = $xoopsUser->uid();
         if ($id) {
             //抓取預設值
             $db_values = empty($id) ? [] : self::get($id);
 
             if ($uid != $db_values['uid'] && !$_SESSION['kyc_signup_adm']) {
-                redirect_header($_SERVER['PHP_SELF'], 3, "您沒有權限使用此功能");
+                redirect_header($_SERVER['PHP_SELF'], 3, _TAD_PERMISSION_DENIED);
             }
 
             $db_values['number'] = empty($id) ? 50 : $db_values['number'];
@@ -81,7 +82,7 @@ class Kyc_signup_actions
     {
         global $xoopsDB, $xoopsUser;
         if (!$_SESSION['can_add']) {
-            redirect_header($_SERVER['PHP_SELF'], 3, "您沒有權限使用此功能");
+            redirect_header($_SERVER['PHP_SELF'], 3, _TAD_PERMISSION_DENIED);
         }
 
         //XOOPS表單安全檢查
@@ -162,7 +163,7 @@ class Kyc_signup_actions
     {
         global $xoopsDB,$xoopsUser;
         if (!$_SESSION['can_add']) {
-            redirect_header($_SERVER['PHP_SELF'], 3, "您沒有權限使用此功能");
+            redirect_header($_SERVER['PHP_SELF'], 3, _TAD_PERMISSION_DENIED);
         }
         //XOOPS表單安全檢查
         Utility::xoops_security_check();
@@ -178,7 +179,7 @@ class Kyc_signup_actions
 
         $now_uid = $xoopsUser ? $xoopsUser->uid() : 0;
         if ($uid != $now_uid && !$_SESSION['kyc_signup_adm']) {
-            redirect_header($_SERVER['PHP_SELF'], 3, "您沒有權限使用此功能");
+            redirect_header($_SERVER['PHP_SELF'], 3, _TAD_PERMISSION_DENIED);
         }
 
         $sql = "update `" . $xoopsDB->prefix("kyc_signup_actions") . "` set
@@ -206,7 +207,7 @@ class Kyc_signup_actions
     {
         global $xoopsDB,$xoopsUser;
         if (!$_SESSION['can_add']) {
-            redirect_header($_SERVER['PHP_SELF'], 3, "您沒有權限使用此功能");
+            redirect_header($_SERVER['PHP_SELF'], 3, _TAD_PERMISSION_DENIED);
         }
         if (empty($id)) {
             return;
@@ -215,7 +216,7 @@ class Kyc_signup_actions
         $action = self::get($id);
         $now_uid = $xoopsUser ? $xoopsUser->uid() : 0;
         if ($action['uid'] != $now_uid['uid'] && !$_SESSION['kyc_signup_adm']) {
-            redirect_header($_SERVER['PHP_SELF'], 3, "您沒有權限使用此功能");
+            redirect_header($_SERVER['PHP_SELF'], 3, _TAD_PERMISSION_DENIED);
         }
 
         $sql = "delete from `" . $xoopsDB->prefix("kyc_signup_actions") . "`
@@ -264,7 +265,7 @@ class Kyc_signup_actions
         $limit = $show_number ? "limit 0, $show_number" : "";
         $sql = "select * from `" . $xoopsDB->prefix("kyc_signup_actions") . "` where 1 $and_enable order by `enable`
         $order  $limit";
-        if (!$show_number) {
+        if (!$show_number  && !$_SESSION['api_mode']) {
             //Utility::getPageBar($原sql語法, 每頁顯示幾筆資料, 最多顯示幾個頁數選項);
             $PageBar = Utility::getPageBar($sql,  $xoopsModuleConfig['show_number'] , 10);
             $bar = $PageBar['bar'];
@@ -279,7 +280,7 @@ class Kyc_signup_actions
         while ($data = $xoopsDB->fetchArray($result)) {
             $data['title'] = $myts->htmlSpecialChars($data['title']);
             $data['detail'] = $myts->displayTarea($data['detail'], 1, 0, 0, 0, 0);
-            $data['signup'] = Kyc_signup_data::get_all($data['id']);
+            $data['signup_count'] = count(Kyc_signup_data::get_all($data['id']));
 
             if ($_SESSION['api_mode'] or $auto_key) {
                 $data_arr[] = $data;
@@ -295,7 +296,7 @@ class Kyc_signup_actions
     {
         global $xoopsDB, $xoopsUser;
         if (!$_SESSION['can_add']) {
-            redirect_header($_SERVER['PHP_SELF'], 3, "您沒有權限使用此功能");
+            redirect_header($_SERVER['PHP_SELF'], 3, _TAD_PERMISSION_DENIED);
         }
 
         $action = self::get($id);

@@ -33,7 +33,7 @@ switch ($op) {
     //批次匯入 CSV
     case 'kyc_signup_data_import_csv':
         Kyc_signup_data::import_csv($id);
-        redirect_header("{$_SERVER['PHP_SELF']}?id=$id", 3, "成功匯入報名資料！");
+        redirect_header("{$_SERVER['PHP_SELF']}?id=$id", 3, _MD_KYC_SIGNUP_IMPORT_SUCCESS);
         break;
     //修改報名表單(Excel)
     case 'kyc_signup_data_preview_excel':
@@ -52,7 +52,7 @@ switch ($op) {
     // 將 Excel 資料存入資料庫
     case 'kyc_signup_data_import_excel':
         Kyc_signup_data::import_excel($id);
-        header("location: {$_SERVER['PHP_SELF']}?id=$id");
+        redirect_header("{$_SERVER['PHP_SELF']}?id=$id", 3, _MD_KYC_SIGNUP_IMPORT_SUCCESS);
         exit;
 
     //新增表單
@@ -64,7 +64,7 @@ switch ($op) {
     case 'kyc_signup_actions_store':
         $id = Kyc_signup_actions::store();
         // header("location: {$_SERVER['PHP_SELF']}?id=$id");
-        redirect_header($_SERVER['PHP_SELF'] . "?id=$id", 3, "成功建立活動！");
+        redirect_header($_SERVER['PHP_SELF'] . "?id=$id", 3, _MD_KYC_SIGNUP_CREATE_SUCCESS);
         exit;
 
     //修改用表單
@@ -77,14 +77,14 @@ switch ($op) {
     case 'kyc_signup_actions_update':
         Kyc_signup_actions::update($id);
         // header("location: {$_SERVER['PHP_SELF']}?id=$id");
-        redirect_header($_SERVER['PHP_SELF'] . "?id=$id", 3, "成功修改活動！");
+        redirect_header($_SERVER['PHP_SELF'] . "?id=$id", 3, _MD_KYC_SIGNUP_UPDATE_SUCCESS);
         exit;
 
     //刪除資料
     case 'kyc_signup_actions_destroy':
         Kyc_signup_actions::destroy($id);
         // header("location: {$_SERVER['PHP_SELF']}");
-        redirect_header($_SERVER['PHP_SELF'], 3, "成功刪除活動！");
+        redirect_header($_SERVER['PHP_SELF'], 3, _MD_KYC_SIGNUP_DESTROY_SUCCESS);
         exit;
     //報名表單
     case 'kyc_signup_data_create':
@@ -94,7 +94,7 @@ switch ($op) {
     case 'kyc_signup_data_store':
         $id = Kyc_signup_data::store();
         Kyc_signup_data::mail($id,'store');
-        redirect_header("{$_SERVER['PHP_SELF']}?op=kyc_signup_data_show&id=$id", 3, "成功報名活動！");
+        redirect_header("{$_SERVER['PHP_SELF']}?op=kyc_signup_data_show&id=$id", 3, _MD_KYC_SIGNUP_APPLY_SUCCESS);
         break;
     //顯示報名表單
     case 'kyc_signup_data_show':
@@ -109,7 +109,7 @@ switch ($op) {
     case 'kyc_signup_data_update':
         Kyc_signup_data::update($id);
         Kyc_signup_data::mail($id,'update');
-        redirect_header($_SERVER['PHP_SELF'] . "?op=kyc_signup_data_show&id=$id", 3, "成功修改報名資料！");
+        redirect_header($_SERVER['PHP_SELF'] . "?op=kyc_signup_data_show&id=$id", 3, _MD_KYC_SIGNUP_APPLY_UPDATE_SUCCESS);
         exit;
     //刪除報名資料
     case 'kyc_signup_data_destroy':
@@ -117,7 +117,7 @@ switch ($op) {
         $signup = Kyc_signup_data::get($id , $uid);
         Kyc_signup_data::destroy($id);
         Kyc_signup_data::mail($id,'destroy',$signup);
-        redirect_header($_SERVER['PHP_SELF'] . "?id=$action_id", 3, "成功刪除報名資料！");
+        redirect_header($_SERVER['PHP_SELF'] . "?id=$action_id", 3, _MD_KYC_SIGNUP_APPLY_DESTROY_SUCCESS);
         exit;
     // 複製活動
     case 'kyc_signup_actions_copy':
@@ -129,7 +129,7 @@ switch ($op) {
     case 'kyc_signup_data_accept':
         Kyc_signup_data::accept($id, $accept);
         Kyc_signup_data::mail($id,'accept');
-        redirect_header($_SERVER['PHP_SELF'] . "?id=$action_id", 3, "成功設定錄取狀態！");
+        redirect_header($_SERVER['PHP_SELF'] . "?id=$action_id", 3, _MD_KYC_SIGNUP_ACCEPT_SUCCESS);
         exit;
     default:
         if (empty($id)) {

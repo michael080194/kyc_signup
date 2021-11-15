@@ -1,4 +1,4 @@
-<h2 class="my">匯入「<{$action.title}>」報名資料預覽</h2>
+<h2 class="my"><{$smarty.const._MD_KYC_SIGNUP_IMPORT}>「<{$action.title}>」<{$smarty.const._MD_KYC_SIGNUP_DATA_PREVIEW}></h2>
 <form action="index.php" method="post" id="myForm">
     <table class="table table-bordered table-sm">
         <thead>
@@ -44,7 +44,7 @@
     <input type="hidden" name="op" value="kyc_signup_data_import_csv">
     <div class="bar">
         <button type="submit" class="btn btn-primary">
-            <i class="fa fa-save" aria-hidden="true"></i> 匯入CSV資料
+            <i class="fa fa-save" aria-hidden="true"></i> <{$smarty.const._MD_KYC_SIGNUP_IMPORT}> CSV
         </button>
     </div>
 </form>

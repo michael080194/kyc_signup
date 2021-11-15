@@ -1,17 +1,17 @@
-<h2 class="my">活動設定</h2>
+<h2 class="my"><{$smarty.const._MD_KYC_SIGNUP_ACTION_SETTING}></h2>
 <form action="index.php" method="post" id="myForm" enctype="multipart/form-data" class="form-horizontal">
 
     <div class="form-group row">
         <label class="col-sm-2 control-label col-form-label text-md-right">
-            活動標題
+        <{$smarty.const._MD_KYC_SIGNUP_TITLE}>
         </label>
         <div class="col-sm-10">
-            <input type="text" name="title" id="title" class="form-control validate[required]" value="<{$title}>" placeholder="請輸入活動標題">
+            <input type="text" name="title" id="title" class="form-control validate[required]" value="<{$title}>" placeholder="<{$smarty.const._MD_KYC_SIGNUP_KEYIN}><{$smarty.const._MD_KYC_SIGNUP_TITLE}>">
         </div>
     </div>
     <div class="form-group row">
         <label class="col-sm-2 control-label col-form-label text-md-right">
-            活動說明
+        <{$smarty.const._MD_KYC_SIGNUP_DETAIL}>
         </label>
         <div class="col-sm-10">
           <{$editor}>
@@ -20,16 +20,16 @@
 
     <div class="form-group row">
         <label class="col-sm-2 control-label col-form-label text-md-right">
-            報名截止日期
+        <{$smarty.const._MD_KYC_SIGNUP_END_DATE_COL}>
         </label>
         <div class="col-sm-10">
-            <input type="text" name="end_date" id="end_date" class="form-control validate[required]" value="<{$end_date}>" placeholder="請輸入報名截止日期" onClick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:00'})">
+            <input type="text" name="end_date" id="end_date" class="form-control validate[required]" value="<{$end_date}>" placeholder="<{$smarty.const._MD_KYC_SIGNUP_KEYIN}><{$smarty.const._MD_KYC_SIGNUP_END_DATE_COL}>" onClick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:00'})">
         </div>
     </div>
 
     <div class="form-group row">
         <label class="col-sm-2 control-label col-form-label text-md-right">
-            活動日期
+        <{$smarty.const._MD_KYC_SIGNUP_ACTION_DATE}>
         </label>
         <div class="col-sm-10">
             <input type="text" name="action_date" id="action_date" class="form-control validate[required]" value="<{$action_date}>" placeholder="請輸入活動日期" onClick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:00'})">
@@ -38,46 +38,46 @@
 
     <div class="form-group row">
         <label class="col-sm-2 control-label col-form-label text-md-right">
-            報名人數
+        <{$smarty.const._MD_KYC_SIGNUP_NUMBER}>
         </label>
         <div class="col-sm-10">
-            <input type="number" name="number" id="number" class="form-control validate[required]" value="<{$number}>" placeholder="請輸入報名人數">
+            <input type="number" name="number" id="number" class="form-control validate[required]" value="<{$number}>" placeholder="<{$smarty.const._MD_KYC_SIGNUP_KEYIN}><{$smarty.const._MD_KYC_SIGNUP_NUMBER}>">
         </div>
     </div>
 
     <div class="form-group row">
         <label class="col-sm-2 control-label col-form-label text-md-right">
-            候補人數
+        <{$smarty.const._MD_KYC_SIGNUP_CANDIDATES_QUOTA}>
         </label>
         <div class="col-sm-10">
-            <input type="number" name="candidate" id="candidate" class="form-control validate[required]" value="<{$candidate}>" placeholder="請輸入候補人數">
+            <input type="number" name="candidate" id="candidate" class="form-control validate[required]" value="<{$candidate}>" placeholder="<{$smarty.const._MD_KYC_SIGNUP_KEYIN}><{$smarty.const._MD_KYC_SIGNUP_CANDIDATES_QUOTA}>">
         </div>
     </div>
 
     <div class="form-group row">
         <label class="col-sm-2 control-label col-form-label text-md-right">
-            欄位設定
+        <{$smarty.const._MD_KYC_SIGNUP_SETUP}>
         </label>
         <div class="col-sm-10">
-            <textarea name="setup" id="setup" class="form-control validate[required]" placeholder="請輸入欄位設定"><{$setup}></textarea>
+            <textarea name="setup" id="setup" class="form-control validate[required]" placeholder="<{$smarty.const._MD_KYC_SIGNUP_KEYIN}><{$smarty.const._MD_KYC_SIGNUP_SETUP}>"><{$setup}></textarea>
         </div>
     </div>
 
     <div class="form-group row">
         <label class="col-sm-2 control-label col-form-label text-md-right">
-            是否啟用
+        <{$smarty.const._MD_KYC_SIGNUP_ENABLE}>
         </label>
         <div class="col-sm-10" style="padding-top: 8px;">
             <div class="form-check-inline radio-inline">
                 <label class="form-check-label">
                     <input class="form-check-input" type="radio" name="enable" value="1" <{if $enable=='1'}>checked<{/if}>>
-                    是
+                    <{$smarty.const._YES}>
                 </label>
             </div>
             <div class="form-check-inline radio-inline">
                 <label class="form-check-label">
                     <input class="form-check-input" type="radio" name="enable" value="0" <{if $enable=='0'}>checked<{/if}>>
-                    否
+                    <{$smarty.const._NO}>
                 </label>
             </div>
         </div>
@@ -85,7 +85,7 @@
 
     <div class="form-group row">
         <label class="col-sm-2 control-label col-form-label text-md-right">
-            上傳附件
+          <{$smarty.const._MD_KYC_SIGNUP_UPLOADS}>
         </label>
         <div class="col-sm-10">
             <{$upform}>

@@ -6,7 +6,7 @@ use XoopsModules\Tadtools\TadDataCenter;
 /*-----------引入檔案區--------------*/
 require_once __DIR__ . '/header.php';
 if (!$_SESSION['can_add']) {
- redirect_header($_SERVER['PHP_SELF'], 3, "您沒有權限使用此功能");
+ redirect_header($_SERVER['PHP_SELF'], 3, _TAD_PERMISSION_DENIED);
 }
 $id = Request::getInt('id');
 
@@ -25,11 +25,11 @@ $pdf->SetMargins(15, 15); //設定頁面邊界，
 $pdf->AddPage(); //新增頁面，一定要有，否則內容出不來
 
 
-$title = "{$action['title']}簽到表";
+$title = $action['title'] . _MD_KYC_SIGNUP_SIGNIN_TABLE;
 $pdf->SetFont('twkai98_1', 'B', 24, '', true); //設定字型
 $pdf->MultiCell(190, 0, $title, 0, "C");
 $pdf->SetFont('twkai98_1', '', 16, '', true); //設定字型
-$pdf->Cell(40, 20, '活動日期：', 0, 0);
+$pdf->Cell(40, 20,  _MD_KYC_SIGNUP_ACTION_DATE . _TAD_FOR, 0, 0);
 $pdf->Cell(150, 20, $action['action_date'], 0, 1);
 
 // $pdf->MultiCell( $w, $h, $txt, $border = 0, $align = 'J', $fill = false, $ln = 1, $x = '', $y = '', $reseth = true, $stretch = 0, $ishtml = false, $autopadding = true, $maxh = 0, $valign = 'T', $fitcell = false );
@@ -47,11 +47,11 @@ if (empty($col_count)) {
 $h = 15;
 $w = 120 / $col_count;
 $maxh = 15;
-$pdf->Cell(15, $h, '編號', 1, 0, 'C');
+$pdf->Cell(15, $h,  _MD_KYC_SIGNUP_ID, 1, 0, 'C');
 foreach ($col_arr as $col_name) {
     $pdf->Cell($w, $h, $col_name, 1, 0, 'C');
 }
-$pdf->Cell(55, $h, '簽名', 1, 1, 'C');
+$pdf->Cell(55, $h,  _MD_KYC_SIGNUP_SIGNIN , 1, 1, 'C');
 
 $signup = Kyc_signup_data::get_all($action['id'], null, true, true);
 // Utility::dd($signup);

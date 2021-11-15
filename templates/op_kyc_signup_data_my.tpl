@@ -1,12 +1,12 @@
-<h2 class="my">我的報名紀錄</h2>
+<h2 class="my"><{$smarty.const._MD_KYC_SIGNUP_MY_RECORD}></h2>
 
 <table class="table" data-toggle="table" data-pagination="true" data-search="true" data-mobile-responsive="true">
     <thead>
         <tr>
-            <th data-sortable="true">活動名稱</th>
-            <th data-sortable="true">活動日期</th>
-            <th data-sortable="true">報名日期</th>
-            <th data-sortable="true">錄取狀況</th>
+            <th data-sortable="true"><{$smarty.const._MD_KYC_SIGNUP_TITLE}></th>
+            <th data-sortable="true"><{$smarty.const._MD_KYC_SIGNUP_ACTION_DATE}></th>
+            <th data-sortable="true"><{$smarty.const._MD_KYC_SIGNUP_APPLY_DATE}></th>
+            <th data-sortable="true"><{$smarty.const._MD_KYC_SIGNUP_ACCEPT_STATUS}></th>
         </tr>
     </thead>
     <tbody>
@@ -21,11 +21,11 @@
                 <td><{$signup_data.signup_date}></td>
                 <td>
                     <{if $signup_data.accept === '1'}>
-                        <div class="text-primary">錄取</div>
+                        <div class="text-primary"><{$smarty.const._MD_KYC_SIGNUP_ACCEPT}></div>
                     <{elseif $signup_data.accept === '0'}>
-                        <div class="text-muted">未錄取</div>
+                        <div class="text-muted"><{$smarty.const._MD_KYC_SIGNUP_NOT_ACCEPT}></div>
                     <{else}>
-                    <div class="text-warning">尚未公佈</div>
+                    <div class="text-warning"><{$smarty.const._MD_KYC_SIGNUP_ANNOUNCEMENT_NOT_YET}></div>
                     <{/if}>
                 </td>
             </tr>
